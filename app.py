@@ -81,6 +81,23 @@ def index():
     """Render index page with file upload form."""
     return render_template('index.html')
 
+@app.route('/check-google-setup')
+def check_google_setup():
+    """Check Google OAuth setup status."""
+    client_id = os.environ.get("GOOGLE_OAUTH_CLIENT_ID", "Not set")
+    client_secret_status = "Set" if os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET") else "Not set"
+    
+    # Get current redirect URL
+    from google_auth import DEV_REDIRECT_URL
+    
+    setup_info = {
+        "client_id_status": "Set" if client_id != "Not set" else "Not set",
+        "client_secret_status": client_secret_status,
+        "redirect_url": DEV_REDIRECT_URL,
+    }
+    
+    return render_template('check_setup.html', setup_info=setup_info)
+
 
 @app.route('/upload', methods=['POST'])
 def upload_file():

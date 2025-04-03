@@ -21,20 +21,10 @@ SCOPES = [
 ]
 
 # Make sure to use this redirect URL. It has to match the one in the whitelist
-# Get the current Replit URL - we need to handle this differently than the code snippet
-replit_domain = os.environ.get("REPLIT_SLUG", "") 
-if replit_domain:
-    replit_domain = f"{replit_domain}.{os.environ.get('REPLIT_DOMAIN', '')}"
-else:
-    # Use environment variable directly if available
-    replit_domain = os.environ.get("REPLIT_DEV_DOMAIN", "") 
-
-# Make sure we have a domain to work with
-if not replit_domain:
-    print("WARNING: Unable to determine Replit domain from environment variables")
-    replit_domain = "your-repl-name.replit.dev"  # Placeholder that will need to be replaced
-
-DEV_REDIRECT_URL = f'https://{replit_domain}/google_login/callback'
+# Set the redirect URL directly with the current domain
+# Since we're having issues with environment variables, we'll use a more direct approach
+# to ensure the callback URL matches exactly what Google expects
+DEV_REDIRECT_URL = 'https://a92c8796-5385-4590-872e-8108346143b3-00-3h1poy5pxr2sr.spock.replit.dev/google_login/callback'
 
 # Always display setup instructions to the user
 print(f"""To make Google authentication work:
