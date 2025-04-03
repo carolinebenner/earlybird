@@ -6,6 +6,7 @@ This module contains functions for extracting dates from text using various meth
 
 import re
 import logging
+import json
 from datetime import datetime, timedelta
 from dateutil import parser, tz
 
@@ -264,3 +265,165 @@ def extract_event_metadata(text, date_pos):
     description = context.strip()
     
     return title, description
+
+
+def extract_structured_events(text):
+    """
+    Extract structured event information from text.
+    
+    Args:
+        text (str): The text to extract events from
+        
+    Returns:
+        list: A list of event dictionaries with title, date, and optional time
+    """
+    # Extract dates from the text
+    date_results = extract_dates_from_text(text)
+    
+    # Dictionary to track already processed dates to avoid duplicates
+    seen_dates = {}
+    structured_events = []
+    
+    # List of keywords that suggest an assignment or important deadline
+    assignment_keywords = [
+        "assignment", "homework", "project", "report", "paper", "essay", 
+        "exam", "quiz", "test", "midterm", "final", "presentation", 
+        "submission", "due", "deadline", "hand in", "turn in", "submit"
+    ]
+    
+    # Avoid office hours and general course info
+    exclude_keywords = [
+        "office hours", "contact", "email", "phone", "syllabus", 
+        "overview", "course description", "instructor", "professor", 
+        "administration", "weekly", "daily", "every"
+    ]
+    
+    for date_str, date_obj, confidence in date_results:
+        # Find position of date in text
+        pos = text.find(date_str)
+        
+        # Skip if position not found (unlikely)
+        if pos == -1:
+            continue
+            
+        # Extract context around the date
+        context_window = 400  # Characters to look at before and after the date
+        context = get_surrounding_text(text, pos, context_window)
+        
+        # Skip if context contains exclude keywords
+        if any(keyword in context.lower() for keyword in exclude_keywords):
+            continue
+            
+        # Format the date in YYYY-MM-DD format
+        date_formatted = date_obj.strftime('%Y-%m-%d')
+        
+        # Check if we've already seen this date (avoid duplicates)
+        if date_formatted in seen_dates:
+            continue
+            
+        # Extract time if available
+        time_str = extract_time_from_text(context)
+        
+        # Try to extract a meaningful title
+        title = None
+        
+        # Find paragraphs or sentences near the date
+        paragraphs = re.split(r'\n+', context)
+        sentences = []
+        for para in paragraphs:
+            sentences.extend(re.split(r'[.!?]\s+', para))
+            
+        # Find the sentence containing the date or close to it
+        date_sentence = ""
+        for sentence in sentences:
+            if date_str in sentence or any(keyword in sentence.lower() for keyword in assignment_keywords):
+                date_sentence = sentence
+                break
+                
+        if not date_sentence and sentences:
+            # If not found, use the closest sentence
+            date_sentence = sentences[len(sentences) // 2]
+            
+        # Extract potential title from context
+        if date_sentence:
+            # Look for capitalized phrases which might be assignment names
+            cap_phrases = re.findall(r'([A-Z][^.!?:]*(?:[:.]\s*|$))', date_sentence)
+            if cap_phrases:
+                title = max(cap_phrases, key=len).strip()
+                
+            # Look for phrases with assignment keywords
+            if not title or len(title) < 3:
+                for keyword in assignment_keywords:
+                    if keyword in date_sentence.lower():
+                        pattern = r'([^.!?]*\b' + re.escape(keyword) + r'\b[^.!?]*)'
+                        match = re.search(pattern, date_sentence, re.IGNORECASE)
+                        if match:
+                            title = match.group(1).strip()
+                            break
+                            
+            # If still no good title, use date sentence
+            if not title or len(title) < 3:
+                title = date_sentence.strip()
+                
+            # Clean and truncate title
+            if title:
+                # Remove the date string from the title if it appears there
+                title = re.sub(r'\b' + re.escape(date_str) + r'\b', '', title).strip()
+                
+                # Clean up title - remove punctuation at ends and extra spaces
+                title = re.sub(r'^[^a-zA-Z0-9]+', '', title)
+                title = re.sub(r'[^a-zA-Z0-9]+$', '', title)
+                title = re.sub(r'\s+', ' ', title).strip()
+                
+                # Truncate if too long
+                if len(title) > 60:
+                    title = title[:57].strip() + '...'
+        
+        # If we couldn't extract a good title
+        if not title or len(title) < 3:
+            # Default title based on context clues
+            for keyword in assignment_keywords:
+                if keyword in context.lower():
+                    title = f"{keyword.title()} due on {date_formatted}"
+                    break
+                    
+            # Last resort title
+            if not title or len(title) < 3:
+                title = f"Event on {date_formatted}"
+        
+        # Create event dictionary
+        event = {
+            "title": title,
+            "date": date_formatted
+        }
+        
+        # Add time if available
+        if time_str:
+            try:
+                time_obj = parser.parse(time_str)
+                event["time"] = time_obj.strftime('%H:%M')
+            except:
+                pass
+                
+        # Add to results and mark this date as seen
+        structured_events.append(event)
+        seen_dates[date_formatted] = True
+        
+    # Sort events by date
+    structured_events.sort(key=lambda x: x["date"])
+    
+    return structured_events
+
+
+def get_structured_events_json(text):
+    """
+    Get structured events from text and return as a JSON string.
+    
+    Args:
+        text (str): The text to extract events from
+        
+    Returns:
+        str: JSON string representation of structured events
+    """
+    events = extract_structured_events(text)
+    return json.dumps(events, indent=2)

@@ -9,7 +9,7 @@ from flask_login import LoginManager, current_user, login_required, login_user, 
 from sqlalchemy.orm import DeclarativeBase
 
 from document_parser import extract_text_from_file
-from date_extractor import extract_dates_from_text, extract_event_metadata
+from date_extractor import extract_dates_from_text, extract_event_metadata, extract_structured_events
 from calendar_generator import create_ics_file
 
 # Configure logging
@@ -140,38 +140,89 @@ def upload_file():
             # Extract text from file
             document_text = extract_text_from_file(file_path)
             
-            # Extract dates from text
-            date_results = extract_dates_from_text(document_text)
+            # Extract structured events from text using our new function
+            structured_events = extract_structured_events(document_text)
             
-            # Process all dates without filtering by confidence
+            # Process events for display
             events_preview = []
-            for idx, (date_str, date_obj, confidence) in enumerate(date_results):
-                # Find position of date in text
-                pos = document_text.find(date_str)
+            for idx, event in enumerate(structured_events):
+                # We still need the original datetime object for the calendar
+                # Try to parse the date from the structured event
+                try:
+                    date_obj = datetime.strptime(event['date'], '%Y-%m-%d')
+                    
+                    # Add time if available
+                    if 'time' in event:
+                        time_parts = event['time'].split(':')
+                        date_obj = date_obj.replace(hour=int(time_parts[0]), minute=int(time_parts[1]))
+                except ValueError:
+                    # If date parsing fails, skip this event
+                    continue
                 
-                # Extract potential event title and context
-                title, description = extract_event_metadata(document_text, pos)
-                
-                # Format date and time information for display and form
+                # Format date for display
                 date_formatted = date_obj.strftime('%Y-%m-%dT%H:%M')
+                
+                # Find this date in the text to get surrounding context
+                date_str = event['date']
+                pos = document_text.find(date_str)
+                if pos == -1:
+                    # If exact date format not found, try to find month/day
+                    try:
+                        month_name = date_obj.strftime('%B')
+                        day = str(date_obj.day)
+                        pos = document_text.find(f"{month_name} {day}")
+                        if pos == -1:
+                            pos = document_text.find(f"{month_name[:3]} {day}")
+                    except:
+                        pos = 0
+                
+                # Get context around the date
+                description = document_text[max(0, pos - 150):min(len(document_text), pos + 150)] if pos > 0 else ""
                 
                 event_info = {
                     'id': idx,
-                    'date_str': date_str,
+                    'date_str': event['date'],
                     'date_obj_str': date_obj.isoformat(),  # Convert to string for storage
                     'date_formatted': date_formatted,
-                    'confidence': confidence,
-                    'title': title or f"Event on {date_obj.strftime('%Y-%m-%d')}",
+                    'confidence': 0.8,  # Higher default confidence for structured events
+                    'title': event['title'],
                     'full_description': description,
-                    # Keep only a preview of the description for display
-                    'description': document_text[max(0, pos - 100):min(len(document_text), pos + 100)]
+                    'description': description
                 }
                 
                 events_preview.append(event_info)
             
             if not events_preview:
-                flash('No dates found in the document', 'warning')
-                return redirect(url_for('index'))
+                # If no structured events were found, fall back to the original method
+                date_results = extract_dates_from_text(document_text)
+                
+                # Process dates without filtering by confidence
+                for idx, (date_str, date_obj, confidence) in enumerate(date_results):
+                    # Find position of date in text
+                    pos = document_text.find(date_str)
+                    
+                    # Extract potential event title and context
+                    title, description = extract_event_metadata(document_text, pos)
+                    
+                    # Format date and time information for display and form
+                    date_formatted = date_obj.strftime('%Y-%m-%dT%H:%M')
+                    
+                    event_info = {
+                        'id': idx,
+                        'date_str': date_str,
+                        'date_obj_str': date_obj.isoformat(),
+                        'date_formatted': date_formatted,
+                        'confidence': confidence,
+                        'title': title or f"Event on {date_obj.strftime('%Y-%m-%d')}",
+                        'full_description': description,
+                        'description': document_text[max(0, pos - 100):min(len(document_text), pos + 100)]
+                    }
+                    
+                    events_preview.append(event_info)
+                
+                if not events_preview:
+                    flash('No dates found in the document', 'warning')
+                    return redirect(url_for('index'))
             
             # Generate a unique session ID
             session_id = datetime.now().strftime("%Y%m%d%H%M%S") + str(hash(filename) % 10000)
