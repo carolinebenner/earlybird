@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Date Extractor//AI Assistant//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:Further details for preparation\, including resourc...
+DTSTART:20250304T000000
+DTEND:20250304T000000
+DTSTAMP:20250403T175706Z
+UID:16b1697d-7c78-47cb-94db-619a18e0b0fe
+DESCRIPTION:Valuation Quiz  This will be a valuation problem requiring you
+  to evaluate a project that a company is considering. Further details for 
+ preparation\, including resources allowed\, will be given in \nthe March 4
+   class session.  \nQuizzes  \n Are individual\, closed book\, no addition
+ al resource s allowed . The final quiz will be \ncomprehensive\, details f
+ or preparation will be given in the April 1 session
+END:VEVENT
+END:VCALENDAR

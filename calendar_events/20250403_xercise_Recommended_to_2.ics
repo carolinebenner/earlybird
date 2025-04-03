@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Date Extractor//AI Assistant//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:xercise  Recommended to bring a laptop to class...
+DTSTART:20250403T000000
+DTEND:20250403T000000
+DTSTAMP:20250403T174632Z
+UID:7b349cd8-fa05-4cae-af9b-f2b438b9d7dc
+DESCRIPTION:xercise  Recommended to bring a laptop to class  \nSession 4: 
+  \nMarch 27\, 202 5 Mid-term quiz  \nLecture on coding with GenAI  \nFinal
+  group project kick -off Must bring a laptop to class  \nSession 5:  \nApr
+ il 3 \, 202 5 Supervised work on group project \, sharing best \npractices
+ .  Must bring a laptop to class  \nSession 6:  \nApril 10\, 2025  Group Pr
+ oject  Presentation  Day \n 11:59pm  Last chance to cont
+END:VEVENT
+END:VCALENDAR

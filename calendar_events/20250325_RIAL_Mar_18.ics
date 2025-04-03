@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Date Extractor//AI Assistant//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:RIAL    Mar 18   Week 3   Capital Structure  Di...
+DTSTART:20250325T000000
+DTEND:20250325T000000
+DTSTAMP:20250403T175708Z
+UID:89149864-a8df-4632-ac69-2c5e8deeb37b
+DESCRIPTION:RIAL    \nMar 18   \nWeek 3   Capital Structure  \nDividend Po
+ licy  \n Day 3  PR & ppts  \nWinfield  \nHiggins Chapter 6  In class exerc
+ ise (5%)  \nIn class quiz (10%) # 2 - Week 2 \nmaterial  \n TUTORIAL    \n
+ Mar 25  \nWeek 4  Derivatives and Hedging  \n Day 4  PR & ppts  \n In clas
+ s exercise (5%)  \nIn class quiz # 3 (10%) - Week 3 \nmaterial  \n TUTORIA
+ L    \nApr 01  \nWeek 5   Ethics and governance  Day 5  PR &
+END:VEVENT
+END:VCALENDAR

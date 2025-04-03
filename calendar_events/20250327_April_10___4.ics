@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Date Extractor//AI Assistant//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:April 10 & April 14\, 2025 Group Project  Group...
+DTSTART:20250327T000000
+DTEND:20250327T000000
+DTSTAMP:20250403T174630Z
+UID:bac2994d-19a9-470d-af98-50e93560f1a0
+DESCRIPTION:Course \nOutcomes \nAssessed  \nThroughout  Class Participatio
+  n Ind. 10% 1\, 2\, 3\, 4\, 5  \nSee course \nschedule  Lab Ind. 20% 1\, 2
+  \nApril 10 & \nApril 14\, \n2025 Group Project  Group  40% 1\, 2\, 3\, 4\
+ , 5  \nMarch 27\, \n2025 Midterm Quiz  Ind. 30% 1\, 5 \n Total   100%   \n
+  \nTextbook \nand/or Other \nMaterials  Required readings  that will be as
+ sessed in quizzes will be determined by the instructor \nand posted
+END:VEVENT
+END:VCALENDAR

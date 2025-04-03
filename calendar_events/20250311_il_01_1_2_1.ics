@@ -1,0 +1,20 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Date Extractor//AI Assistant//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:il 01 1\,2 1\,6 In-class exercises / activities...
+DTSTART:20250311T000000
+DTEND:20250311T000000
+DTSTAMP:20250403T175704Z
+UID:939f78f4-954d-4018-80b9-a1c5d80c6fdf
+DESCRIPTION:il 01 1\,2 \n1\,6 \nIn-class \nexercises / \nactivities  Risk 
+ \nPortfolio Sim  \nNike CoC  \nWinfield  \nCap str/Derivatives  \nResource
+  Alloc  \nCompensation  10%  \n5% \n10% \n5% \n5% \n10% \n5% March 04 \nMa
+ rch 04  \nMarch 11 \nMarch 18 \nMarch 25 \nApril 01 \nApril 08 1 \n1\,4 \n
+ 1\,2\,3 \n1\,2\,3\,4\,5  \n1\,2\,3 \n5\,6 \n5\,6 \nQuiz #1 \nQuiz # 2 \nQu
+ iz # 3 \nFinal quiz Project valuation  \nOn Week 2  \nOn Week 3  \nCompreh
+ ensive  10%  \n10
+END:VEVENT
+END:VCALENDAR

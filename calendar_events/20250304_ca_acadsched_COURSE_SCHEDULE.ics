@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Date Extractor//AI Assistant//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:ca/acadsched   COURSE SCHEDULE FNCE 67 4 DATE...
+DTSTART:20250304T000000
+DTEND:20250304T000000
+DTSTAMP:20250403T175706Z
+UID:56cdcb5f-46e4-4fde-9418-6e0cf3393ee1
+DESCRIPTION:site: https://calendar.ucalgary.ca/acadsched  \n \nCOURSE SCHE
+ DULE FNCE 67 4 \nDATE  DETAILS  Class Preparation \n(readings\, reviews\, 
+ etc.)  Deliverables  \n OPTIONAL TUTORIAL  Come visit Peggy  BYOBevy  \nMa
+ r 04 \nWeek 1  Risk/return/CAPM  \nSources of Finan cing \nLeverage and Ri
+ sk  \nPortfolio simulation  Day 1 PR & ppts  \n \n In class \, group  (10%
+ ) \n  \nIn-class\, group (5%)  \n TUTORIAL    \nMar 11  \nWeek
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Date Extractor//AI Assistant//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:s quiz (10%) # 2 - Week 2 material   TUTORIAL...
+DTSTART:20250401T000000
+DTEND:20250401T000000
+DTSTAMP:20250403T175708Z
+UID:12c12095-1397-4b33-a850-e459c970dad4
+DESCRIPTION:s quiz (10%) # 2 - Week 2 \nmaterial  \n TUTORIAL    \nMar 25 
+  \nWeek 4  Derivatives and Hedging  \n Day 4  PR & ppts  \n In class exerc
+ ise (5%)  \nIn class quiz # 3 (10%) - Week 3 \nmaterial  \n TUTORIAL    \n
+ Apr 01  \nWeek 5   Ethics and governance  Day 5  PR & ppts  \nInvest or ta
+ ke: a VC’s \nethical dilemma  \n Case discussion and write -up\, in clas
+ s  \n(5%) \n \nIn class activity  (10%)  \n TUTORIAL    \nApr 08
+END:VEVENT
+END:VCALENDAR
