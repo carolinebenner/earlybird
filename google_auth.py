@@ -21,14 +21,32 @@ SCOPES = [
 ]
 
 # Make sure to use this redirect URL. It has to match the one in the whitelist
-DEV_REDIRECT_URL = f'https://{os.environ.get("REPLIT_DEV_DOMAIN", "")}/google_login/callback'
+# Get the current Replit URL - we need to handle this differently than the code snippet
+replit_domain = os.environ.get("REPLIT_SLUG", "") 
+if replit_domain:
+    replit_domain = f"{replit_domain}.{os.environ.get('REPLIT_DOMAIN', '')}"
+else:
+    # Use environment variable directly if available
+    replit_domain = os.environ.get("REPLIT_DEV_DOMAIN", "") 
+
+# Make sure we have a domain to work with
+if not replit_domain:
+    print("WARNING: Unable to determine Replit domain from environment variables")
+    replit_domain = "your-repl-name.replit.dev"  # Placeholder that will need to be replaced
+
+DEV_REDIRECT_URL = f'https://{replit_domain}/google_login/callback'
 
 # Always display setup instructions to the user
 print(f"""To make Google authentication work:
 1. Go to https://console.cloud.google.com/apis/credentials
 2. Create a new OAuth 2.0 Client ID
-3. Add {DEV_REDIRECT_URL} to Authorized redirect URIs
-4. Make sure you enable the Google Calendar API in the API Library
+3. For OAuth consent screen settings:
+   - Set User Type to External
+   - Add your app name, support email, and developer contact information
+   - Add the following scopes: .../auth/userinfo.email, .../auth/userinfo.profile, .../auth/calendar.events
+4. Add the following Authorized redirect URI:
+   {DEV_REDIRECT_URL}
+5. Make sure to enable the Google Calendar API in the API Library
 
 For detailed instructions, see:
 https://docs.replit.com/additional-resources/google-auth-in-flask#set-up-your-oauth-app--client
@@ -51,12 +69,14 @@ def login():
     google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
 
+    # Log the redirect URI for debugging
+    callback_uri = DEV_REDIRECT_URL
+    print(f"Using redirect URI: {callback_uri}")
+
     # Use library to construct the request for Google login
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
-        # Replacing http:// with https:// is important as the external
-        # protocol must be https to match the URI whitelisted
-        redirect_uri=request.base_url.replace("http://", "https://") + "/callback",
+        redirect_uri=callback_uri,
         scope=SCOPES,
     )
     return redirect(request_uri)
@@ -71,13 +91,15 @@ def callback():
     google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
     token_endpoint = google_provider_cfg["token_endpoint"]
     
+    # Log the details for debugging
+    print(f"Received callback with code: {code}")
+    print(f"Using redirect URI: {DEV_REDIRECT_URL}")
+    
     # Prepare and send a request to get tokens
     token_url, headers, body = client.prepare_token_request(
         token_endpoint,
-        # Replacing http:// with https:// is important as the external
-        # protocol must be https to match the URI whitelisted
         authorization_response=request.url.replace("http://", "https://"),
-        redirect_url=request.base_url.replace("http://", "https://"),
+        redirect_url=DEV_REDIRECT_URL,
         code=code
     )
     token_response = requests.post(
