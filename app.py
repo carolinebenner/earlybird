@@ -4,6 +4,9 @@ import logging
 from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 from flask import Flask, flash, request, redirect, url_for, render_template, send_from_directory, session
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, current_user, login_required, login_user, logout_user
+from sqlalchemy.orm import DeclarativeBase
 
 from document_parser import extract_text_from_file
 from date_extractor import extract_dates_from_text, extract_event_metadata
@@ -13,9 +16,39 @@ from calendar_generator import create_ics_file
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Configure Flask application
+# Configure Flask application and database
+class Base(DeclarativeBase):
+    pass
+
+db = SQLAlchemy(model_class=Base)
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev_secret_key")
+
+# Database configuration
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///app.db")
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_recycle": 300,
+    "pool_pre_ping": True,
+}
+db.init_app(app)
+
+# Configure login manager
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "index"
+
+# Import models and create tables
+with app.app_context():
+    from models import User
+    db.create_all()
+
+# Import and register Google Auth blueprint
+from google_auth import google_auth, add_event_to_google_calendar
+app.register_blueprint(google_auth)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # Configure upload folder
 UPLOAD_FOLDER = './uploads'
@@ -165,6 +198,8 @@ def generate_calendar():
         return redirect(url_for('index'))
     
     created_files = []
+    google_calendar_results = []
+    add_to_google = request.form.get('add_to_google_calendar') == 'yes'
     
     for event_id in selected_events:
         for session_event in session_events:
@@ -199,6 +234,23 @@ def generate_calendar():
                     # Create ICS file
                     filepath = create_ics_file(event_data, app.config['CALENDAR_FOLDER'])
                     created_files.append(os.path.basename(filepath))
+                    
+                    # If user is logged in with Google and requested to add to Google Calendar
+                    if add_to_google and current_user.is_authenticated:
+                        success, message = add_event_to_google_calendar(event_data)
+                        if success:
+                            google_calendar_results.append({
+                                'title': custom_title,
+                                'success': True,
+                                'message': 'Successfully added to your Google Calendar'
+                            })
+                        else:
+                            google_calendar_results.append({
+                                'title': custom_title,
+                                'success': False,
+                                'message': message
+                            })
+                
                 except Exception as e:
                     logger.error(f"Failed to create calendar event: {e}")
                     flash(f'Failed to create event: {str(e)}', 'error')
@@ -212,7 +264,10 @@ def generate_calendar():
     # Clear session data
     session.clear()
     
-    return render_template('download.html', files=created_files)
+    return render_template('download.html', 
+                          files=created_files, 
+                          google_calendar_results=google_calendar_results,
+                          is_authenticated=current_user.is_authenticated)
 
 
 @app.route('/download/<filename>')
