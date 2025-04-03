@@ -46,12 +46,12 @@
                                             <div class="col-md-6">
                                                 <label for="start_time_{{ event.id }}" class="form-label">Start Time</label>
                                                 <input type="datetime-local" class="form-control" id="start_time_{{ event.id }}" name="start_time_{{ event.id }}" 
-                                                    value="{{ event.date_obj.strftime('%Y-%m-%dT%H:%M') }}">
+                                                    value="{{ event.date_formatted }}">
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="end_time_{{ event.id }}" class="form-label">End Time</label>
                                                 <input type="datetime-local" class="form-control" id="end_time_{{ event.id }}" name="end_time_{{ event.id }}" 
-                                                    value="{{ event.date_obj.replace(hour=event.date_obj.hour + 1).strftime('%Y-%m-%dT%H:%M') }}">
+                                                    value="{{ event.date_formatted }}">
                                             </div>
                                         </div>
                                         <div class="mb-2">

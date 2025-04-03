@@ -66,33 +66,25 @@ def upload_file():
             document_text = extract_text_from_file(file_path)
             
             # Extract dates from text
-            min_confidence = float(request.form.get('min_confidence', 0.5))
             date_results = extract_dates_from_text(document_text)
             
-            # Filter dates by confidence
-            filtered_dates = [
-                (date_str, date_obj, confidence, idx) 
-                for idx, (date_str, date_obj, confidence) in enumerate(date_results)
-                if confidence >= min_confidence
-            ]
-            
-            if not filtered_dates:
-                flash('No dates found with sufficient confidence', 'warning')
-                return redirect(url_for('index'))
-            
-            # Prepare events preview data
+            # Process all dates without filtering by confidence
             events_preview = []
-            for date_str, date_obj, confidence, idx in filtered_dates:
+            for idx, (date_str, date_obj, confidence) in enumerate(date_results):
                 # Find position of date in text
                 pos = document_text.find(date_str)
                 
                 # Extract potential event title and context
                 title, description = extract_event_metadata(document_text, pos)
                 
+                # Format date and time information for display and form
+                date_formatted = date_obj.strftime('%Y-%m-%dT%H:%M')
+                
                 event_info = {
                     'id': idx,
                     'date_str': date_str,
                     'date_obj_str': date_obj.isoformat(),  # Convert to string for session storage
+                    'date_formatted': date_formatted,
                     'confidence': confidence,
                     'title': title or f"Event on {date_obj.strftime('%Y-%m-%d')}",
                     'full_description': description,
@@ -101,6 +93,10 @@ def upload_file():
                 
                 events_preview.append(event_info)
             
+            if not events_preview:
+                flash('No dates found in the document', 'warning')
+                return redirect(url_for('index'))
+                
             # Store in session for the preview page
             session['events_preview'] = events_preview
             session['document_text'] = document_text
