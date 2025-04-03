@@ -81,6 +81,20 @@
                         </table>
                     </div>
                     
+                    {% if current_user.is_authenticated %}
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" value="yes" id="add_to_google_calendar" name="add_to_google_calendar" checked>
+                        <label class="form-check-label" for="add_to_google_calendar">
+                            Add events to my Google Calendar
+                        </label>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info mb-3">
+                        <i class="bi bi-info-circle"></i> 
+                        <a href="{{ url_for('google_auth.login') }}">Login with Google</a> to add events directly to your Google Calendar.
+                    </div>
+                    {% endif %}
+                    
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">Generate Calendar Events</button>

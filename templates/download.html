@@ -10,6 +10,27 @@
                 <h2 class="card-title">Download Calendar Files</h2>
             </div>
             <div class="card-body">
+                {% if google_calendar_results and google_calendar_results|length > 0 %}
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Google Calendar Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            {% for result in google_calendar_results %}
+                                <div class="list-group-item {% if result.success %}list-group-item-success{% else %}list-group-item-warning{% endif %}">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">{{ result.title }}</h5>
+                                        <small>{% if result.success %}Success{% else %}Failed{% endif %}</small>
+                                    </div>
+                                    <p class="mb-1">{{ result.message }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
                 {% if files %}
                 <div class="alert alert-success">
                     <i class="fas fa-check-circle me-2"></i>

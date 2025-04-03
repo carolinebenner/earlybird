@@ -163,8 +163,39 @@ def add_event_to_google_calendar(event_data):
             if not refresh_token:
                 return False, "No refresh token available"
             
-            # TODO: Implement token refresh logic if needed
-            return False, "Token expired, please log in again"
+            # Refresh the token
+            try:
+                # Find out what URL to hit for token refresh
+                google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
+                token_endpoint = google_provider_cfg["token_endpoint"]
+                
+                # Prepare token refresh request
+                refresh_request = {
+                    'refresh_token': refresh_token,
+                    'client_id': GOOGLE_CLIENT_ID,
+                    'client_secret': GOOGLE_CLIENT_SECRET,
+                    'grant_type': 'refresh_token'
+                }
+                
+                # Make the request
+                response = requests.post(token_endpoint, data=refresh_request)
+                if response.status_code != 200:
+                    return False, "Failed to refresh token, please log in again"
+                
+                # Update token data
+                new_token_data = response.json()
+                # Preserve the refresh token if not returned in the response
+                if 'refresh_token' not in new_token_data and refresh_token:
+                    new_token_data['refresh_token'] = refresh_token
+                
+                # Update user's token in database
+                current_user.google_token = json.dumps(new_token_data)
+                db.session.commit()
+                
+                # Use the new token
+                token_data = new_token_data
+            except Exception as e:
+                return False, f"Error refreshing token: {str(e)}"
         
         # Create event data for Google Calendar API
         event = {
