@@ -10,6 +10,7 @@ from sqlalchemy.orm import DeclarativeBase
 
 from document_parser import extract_text_from_file
 from date_extractor import extract_dates_from_text, extract_event_metadata, extract_structured_events
+from syllabus_extractor import extract_assessments_from_syllabus
 from calendar_generator import create_ics_file
 
 # Configure logging
@@ -140,8 +141,11 @@ def upload_file():
             # Extract text from file
             document_text = extract_text_from_file(file_path)
             
-            # Extract structured events from text using our new function
-            structured_events = extract_structured_events(document_text)
+            # First try specialized syllabus assessment extractor for academic syllabi
+            syllabus_events = extract_assessments_from_syllabus(document_text)
+            
+            # If syllabus-specific assessments found, use those
+            structured_events = syllabus_events if syllabus_events else extract_structured_events(document_text)
             
             # Process events for display
             events_preview = []
@@ -151,10 +155,14 @@ def upload_file():
                 try:
                     date_obj = datetime.strptime(event['date'], '%Y-%m-%d')
                     
-                    # Add time if available
-                    if 'time' in event:
+                    # Add time if available and in time format
+                    if 'time' in event and ':' in event['time']:
                         time_parts = event['time'].split(':')
                         date_obj = date_obj.replace(hour=int(time_parts[0]), minute=int(time_parts[1]))
+                    # Handle special cases like "during class" or "see course schedule"
+                    elif 'time' in event:
+                        # Use default time of 9:00 AM
+                        date_obj = date_obj.replace(hour=9, minute=0)
                 except ValueError:
                     # If date parsing fails, skip this event
                     continue
