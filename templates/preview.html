@@ -15,6 +15,9 @@
                 </p>
                 
                 <form action="{{ url_for('generate_calendar') }}" method="post">
+                    <!-- Add hidden field for session ID -->
+                    <input type="hidden" name="session_id" value="{{ session_id }}">
+                    
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
