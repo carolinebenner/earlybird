@@ -4,12 +4,12 @@ PRODID:-//Date Extractor//AI Assistant//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-SUMMARY:FNCE: Resource Allocation Exercise
+SUMMARY:OBHR: Class Participation
 DTSTART:20250325T000000
-DTEND:20250325T030000
+DTEND:20250325T000000
 DTSTAMP:20250403T211742Z
-UID:a5d7908d-08fa-4576-9eef-cfc94198fee4
-DESCRIPTION:Course: FNCE\nAssessment: Resource Allocation Exercise\nTime: 
- during class
+UID:2083b896-e423-4af0-8492-2a41b79426b0
+DESCRIPTION:Course: OBHR\nAssessment: Class Participation\nTime: throughou
+ t the course
 END:VEVENT
 END:VCALENDAR
