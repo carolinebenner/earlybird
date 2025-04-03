@@ -19,4 +19,5 @@ dependencies = [
     "oauthlib>=3.2.2",
     "requests>=2.32.3",
     "sqlalchemy>=2.0.40",
+    "openai>=1.70.0",
 ]
