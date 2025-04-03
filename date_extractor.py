@@ -287,14 +287,23 @@ def extract_structured_events(text):
     # Focus ONLY on these specific assignment keywords as requested
     assignment_keywords = [
         "deliverable", "due", "assessment", "assignment", "test", "quiz", 
-        "final", "exam", "in-class", "exercise"
+        "final", "exam", "in-class", "exercise", "project", "paper", "report",
+        "presentation", "midterm", "group project", "proposal", "submission",
+        "lab", "homework", "portfolio", "thesis", "dissertation"
     ]
     
     # Avoid office hours and general course info
     exclude_keywords = [
-        "office hours", "contact", "email", "phone", "schedule", "syllabus", 
+        "office hours", "contact", "email", "phone", "syllabus", 
         "overview", "course description", "instructor", "professor", 
-        "administration", "weekly", "daily", "every", "course outline"
+        "administration", "weekly", "daily", "every", "course outline",
+        "lecture time", "class meets", "class time", "classroom"
+    ]
+    
+    # Look for "Throughout" or "See course schedule" indicators
+    throughout_indicators = [
+        "throughout", "see course schedule", "see schedule", "tba", "to be announced",
+        "to be determined", "tbd", "various dates", "ongoing", "continuous", "multiple dates"
     ]
     
     for date_str, date_obj, confidence in date_results:
@@ -440,11 +449,104 @@ def extract_structured_events(text):
             except:
                 pass
                 
+        # Check if we need to replace the time with a more readable format
+        if "time" in event and event["time"]:
+            # Convert 24h time format to more readable format like "11:59pm"
+            try:
+                time_obj = datetime.strptime(event["time"], "%H:%M")
+                event["time"] = time_obj.strftime("%-I:%M%p").lower()
+            except:
+                # If conversion fails, keep original time
+                pass
+        else:
+            # Default time if not specified
+            event["time"] = "during class"
+                
         # Add to results and mark this date as seen
         if title and len(title) > 3:  # Only add if we have a meaningful title
             structured_events.append(event)
             seen_dates[date_formatted] = True
+    
+    # Now, scan the text for assessment items with "throughout" or "see course schedule"
+    paragraphs = re.split(r'\n{2,}', text)
+    
+    # Specifically look for the lab exercises that are marked as "throughout" or "see course schedule"
+    lab_found = False
+    
+    for paragraph in paragraphs:
+        paragraph_lower = paragraph.lower()
         
+        # Special case for "Lab" exercises with "Throughout" or "See course schedule"
+        if "lab" in paragraph_lower and any(word in paragraph_lower for word in ["throughout", "see course schedule"]):
+            lab_found = True
+            structured_events.append({
+                "title": "Lab Exercises",
+                "date": datetime.now().strftime('%Y-%m-%d'),
+                "time": "see course schedule"
+            })
+    
+    for paragraph in paragraphs:
+        # Check if this paragraph mentions an assessment
+        if any(keyword in paragraph.lower() for keyword in assignment_keywords):
+            # Check if it also mentions any of the throughout indicators
+            if any(indicator in paragraph.lower() for indicator in throughout_indicators):
+                # This is an assessment with "throughout" or similar indicator
+                
+                # Try to extract a title for this assessment
+                title = None
+                
+                # Try to find a specific assignment name first
+                assignment_patterns = [
+                    r'(?:Assignment|Quiz|Test|Exam|Project|Lab)\s+\d+',
+                    r'(?:Assignment|Quiz|Test|Exam|Project|Lab)\s+[IVX]+',
+                    r'(?:Group|Team|Individual)\s+(?:Project|Assignment|Report)',
+                    r'(?:Case|Lab)\s+(?:Study|Report|Assignment)',
+                    r'(?:Final|Midterm)\s+(?:Exam|Project|Paper|Presentation)'
+                ]
+                
+                for pattern in assignment_patterns:
+                    match = re.search(pattern, paragraph, re.IGNORECASE)
+                    if match:
+                        title = match.group(0).strip()
+                        break
+                
+                # If no specific title found, look for capitalized phrases
+                if not title:
+                    cap_phrases = re.findall(r'([A-Z][a-zA-Z0-9]+(?: [A-Za-z0-9]+){0,4})', paragraph)
+                    if cap_phrases and len(cap_phrases) > 0:
+                        longest_phrase = max(cap_phrases, key=len)
+                        if len(longest_phrase) > 4:  # Only use if it's a substantial phrase
+                            title = longest_phrase.strip()
+                
+                # If still no title, use the keyword
+                if not title:
+                    for keyword in assignment_keywords:
+                        if keyword in paragraph.lower():
+                            title = f"{keyword.title()}"
+                            break
+                
+                # Clean up the title
+                if title:
+                    title = re.sub(r'\s+', ' ', title).strip()
+                    # Make sure title starts with a capital letter
+                    if title and len(title) > 0:
+                        title = title[0].upper() + title[1:]
+                
+                # Use today's date as requested for "throughout" or "see course schedule" items
+                today = datetime.now().strftime('%Y-%m-%d')
+                
+                # Create the event
+                event = {
+                    "title": title,
+                    "date": today,
+                    "time": "see course schedule"
+                }
+                
+                # Add to results if we have a valid title and not a duplicate
+                if title and today not in seen_dates:
+                    structured_events.append(event)
+                    seen_dates[today] = True
+    
     # Sort events by date
     structured_events.sort(key=lambda x: x["date"])
     
@@ -454,6 +556,7 @@ def extract_structured_events(text):
 def get_structured_events_json(text):
     """
     Get structured events from text and return as a JSON string.
+    Format: [{"title": "Assignment 1", "date": "2025-03-27", "time": "11:59pm"}, ...]
     
     Args:
         text (str): The text to extract events from
@@ -462,4 +565,19 @@ def get_structured_events_json(text):
         str: JSON string representation of structured events
     """
     events = extract_structured_events(text)
+    
+    # Ensure each event has all required fields
+    for event in events:
+        # Make sure each event has a title field
+        if "title" not in event or not event["title"]:
+            event["title"] = "Unnamed Assessment"
+            
+        # Make sure each event has a date field in YYYY-MM-DD format
+        if "date" not in event or not event["date"]:
+            event["date"] = datetime.now().strftime('%Y-%m-%d')
+            
+        # Make sure each event has a time field
+        if "time" not in event or not event["time"]:
+            event["time"] = "during class"
+    
     return json.dumps(events, indent=2)
