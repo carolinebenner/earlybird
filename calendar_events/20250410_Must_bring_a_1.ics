@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Date Extractor//AI Assistant//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:Must bring a laptop to class  Session 6:  April...
+DTSTART:20250410T235900
+DTEND:20250410T235900
+DTSTAMP:20250403T172347Z
+UID:a7dc031d-0ff9-452a-8fcf-52f78da1cbd3
+DESCRIPTION:AI  \nFinal group project kick -off Must bring a laptop to cla
+ ss  \nSession 5:  \nApril 3 \, 202 5 Supervised work on group project \, s
+ haring best \npractices.  Must bring a laptop to class  \nSession 6:  \nAp
+ ril 10\, 2025  Group Project  Presentation  Day \n 11:59pm  Last chance to
+  contribute on discovery forum.  Make sure slides are ready to present.  P
+ revent \ntechnical difficulties. \nApril 11\, 202 5 11:
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Date Extractor//AI Assistant//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:ca/acadsched    COURSE SCHEDULE  DATE  DETAILS...
+DTSTART:20250313T000000
+DTEND:20250313T000000
+DTSTAMP:20250403T172347Z
+UID:2189588a-edb4-4ba3-8dcf-15a9da491a2c
+DESCRIPTION:s (e.g. Block Week\, Lecture start dates\, Reading Week\, etc.
+ ) can be found at the following web site: https://calendar.ucalgary.ca/aca
+ dsched  \n \n \nCOURSE SCHEDULE  \nDATE  DETAILS  Notes  \nSession 1:  \nM
+ arch 13\, 202 5 Intro  and Lecture  Recommended to bring a \nlaptop to cla
+ ss  \nSession 2:  \nMarch 1 4\, 202 5 Lab:  Hands -on exercises using a va
+ riety of tools  Must bring a laptop to class  \nSession 3
+END:VEVENT
+END:VCALENDAR
