@@ -176,18 +176,17 @@ def upload_file():
                     except:
                         pos = 0
                 
-                # Get context around the date
-                description = document_text[max(0, pos - 150):min(len(document_text), pos + 150)] if pos > 0 else ""
+                # No description as requested - we're removing descriptions to avoid confusion
                 
                 event_info = {
                     'id': idx,
                     'date_str': event['date'],
                     'date_obj_str': date_obj.isoformat(),  # Convert to string for storage
                     'date_formatted': date_formatted,
-                    'confidence': 0.8,  # Higher default confidence for structured events
+                    'confidence': 0.9,  # Higher default confidence for structured events
                     'title': event['title'],
-                    'full_description': description,
-                    'description': description
+                    'full_description': "",  # Empty description as requested
+                    'description': ""  # Empty description as requested
                 }
                 
                 events_preview.append(event_info)

@@ -269,7 +269,7 @@ def extract_event_metadata(text, date_pos):
 
 def extract_structured_events(text):
     """
-    Extract structured event information from text.
+    Extract structured event information from text, focusing only on specific assignment keywords.
     
     Args:
         text (str): The text to extract events from
@@ -284,18 +284,17 @@ def extract_structured_events(text):
     seen_dates = {}
     structured_events = []
     
-    # List of keywords that suggest an assignment or important deadline
+    # Focus ONLY on these specific assignment keywords as requested
     assignment_keywords = [
-        "assignment", "homework", "project", "report", "paper", "essay", 
-        "exam", "quiz", "test", "midterm", "final", "presentation", 
-        "submission", "due", "deadline", "hand in", "turn in", "submit"
+        "deliverable", "due", "assessment", "assignment", "test", "quiz", 
+        "final", "exam", "in-class", "exercise"
     ]
     
     # Avoid office hours and general course info
     exclude_keywords = [
-        "office hours", "contact", "email", "phone", "syllabus", 
+        "office hours", "contact", "email", "phone", "schedule", "syllabus", 
         "overview", "course description", "instructor", "professor", 
-        "administration", "weekly", "daily", "every"
+        "administration", "weekly", "daily", "every", "course outline"
     ]
     
     for date_str, date_obj, confidence in date_results:
@@ -307,11 +306,20 @@ def extract_structured_events(text):
             continue
             
         # Extract context around the date
-        context_window = 400  # Characters to look at before and after the date
+        context_window = 300  # Characters to look at before and after the date
         context = get_surrounding_text(text, pos, context_window)
         
-        # Skip if context contains exclude keywords
-        if any(keyword in context.lower() for keyword in exclude_keywords):
+        # Check if context contains any assignment keywords - REQUIRED
+        contains_assignment_keyword = False
+        found_keyword = None
+        for keyword in assignment_keywords:
+            if keyword in context.lower():
+                contains_assignment_keyword = True
+                found_keyword = keyword
+                break
+                
+        # Skip if NO assignment keyword or if context contains exclude keywords
+        if not contains_assignment_keyword or any(keyword in context.lower() for keyword in exclude_keywords):
             continue
             
         # Format the date in YYYY-MM-DD format
@@ -324,74 +332,101 @@ def extract_structured_events(text):
         # Extract time if available
         time_str = extract_time_from_text(context)
         
-        # Try to extract a meaningful title
-        title = None
-        
         # Find paragraphs or sentences near the date
         paragraphs = re.split(r'\n+', context)
         sentences = []
         for para in paragraphs:
             sentences.extend(re.split(r'[.!?]\s+', para))
             
-        # Find the sentence containing the date or close to it
+        # Find the sentence containing both the date and the keyword
         date_sentence = ""
         for sentence in sentences:
-            if date_str in sentence or any(keyword in sentence.lower() for keyword in assignment_keywords):
+            if (date_str in sentence or date_obj.strftime('%B %d') in sentence) and found_keyword in sentence.lower():
                 date_sentence = sentence
                 break
-                
-        if not date_sentence and sentences:
-            # If not found, use the closest sentence
-            date_sentence = sentences[len(sentences) // 2]
-            
-        # Extract potential title from context
-        if date_sentence:
-            # Look for capitalized phrases which might be assignment names
-            cap_phrases = re.findall(r'([A-Z][^.!?:]*(?:[:.]\s*|$))', date_sentence)
-            if cap_phrases:
-                title = max(cap_phrases, key=len).strip()
-                
-            # Look for phrases with assignment keywords
-            if not title or len(title) < 3:
-                for keyword in assignment_keywords:
-                    if keyword in date_sentence.lower():
-                        pattern = r'([^.!?]*\b' + re.escape(keyword) + r'\b[^.!?]*)'
-                        match = re.search(pattern, date_sentence, re.IGNORECASE)
-                        if match:
-                            title = match.group(1).strip()
-                            break
-                            
-            # If still no good title, use date sentence
-            if not title or len(title) < 3:
-                title = date_sentence.strip()
-                
-            # Clean and truncate title
-            if title:
-                # Remove the date string from the title if it appears there
-                title = re.sub(r'\b' + re.escape(date_str) + r'\b', '', title).strip()
-                
-                # Clean up title - remove punctuation at ends and extra spaces
-                title = re.sub(r'^[^a-zA-Z0-9]+', '', title)
-                title = re.sub(r'[^a-zA-Z0-9]+$', '', title)
-                title = re.sub(r'\s+', ' ', title).strip()
-                
-                # Truncate if too long
-                if len(title) > 60:
-                    title = title[:57].strip() + '...'
         
-        # If we couldn't extract a good title
-        if not title or len(title) < 3:
-            # Default title based on context clues
-            for keyword in assignment_keywords:
-                if keyword in context.lower():
-                    title = f"{keyword.title()} due on {date_formatted}"
+        # If not found, try just sentences with the keyword
+        if not date_sentence:
+            for sentence in sentences:
+                if found_keyword in sentence.lower():
+                    date_sentence = sentence
                     break
                     
-            # Last resort title
-            if not title or len(title) < 3:
-                title = f"Event on {date_formatted}"
+        # Extract a clean title that focuses on the assignment name
+        title = None
         
-        # Create event dictionary
+        if date_sentence:
+            # Try to extract a specific assignment name/number first
+            assignment_patterns = [
+                r'(?:Assignment|Quiz|Test|Exam|Project)\s+\d+',
+                r'(?:Assignment|Quiz|Test|Exam|Project)\s+[IVX]+',
+                r'Final\s+(?:Exam|Test|Quiz|Project|Presentation)',
+                r'Midterm\s+(?:Exam|Test|Quiz)',
+                r'(?:Group|Team|Individual)\s+(?:Project|Assignment|Report|Presentation)',
+                r'(?:Case|Lab)\s+(?:Study|Report|Assignment)\s+\d+'
+            ]
+            
+            for pattern in assignment_patterns:
+                match = re.search(pattern, date_sentence, re.IGNORECASE)
+                if match:
+                    title = match.group(0).strip()
+                    break
+                    
+            # If no specific assignment found, look for a phrase with the keyword
+            if not title and found_keyword:
+                # Get the sentence fragment containing the keyword
+                pattern = r'([^.!?,;]*\b' + re.escape(found_keyword) + r'\b[^.!?,;]*)'
+                match = re.search(pattern, date_sentence, re.IGNORECASE)
+                if match:
+                    title = match.group(1).strip()
+                    
+                    # Clean up the title
+                    title = re.sub(r'\s+', ' ', title).strip()
+                    
+                    # Add "due" if not present but date is
+                    if "due" not in title.lower() and date_obj.strftime('%B %d') in date_sentence:
+                        title = f"{title} due"
+            
+            # If we still don't have a good title, use a capitalized phrase
+            if not title or len(title) < 5:
+                # Find phrases with capitalized words that might be assignment names
+                cap_phrases = re.findall(r'([A-Z][a-zA-Z0-9]+(?: [A-Za-z0-9]+){0,4})', date_sentence)
+                if cap_phrases and len(cap_phrases) > 0:
+                    longest_phrase = max(cap_phrases, key=len)
+                    if len(longest_phrase) > 4:  # Only use if it's a substantial phrase
+                        title = longest_phrase.strip()
+                
+            # Default to a simple title if nothing else worked
+            if not title or len(title) < 5:
+                if found_keyword:
+                    title = f"{found_keyword.title()} due on {date_formatted}"
+                else:
+                    title = f"Assignment due on {date_formatted}"
+                
+            # Clean up the title and remove the date
+            if title:
+                # Remove exact date strings
+                title = re.sub(r'\b' + re.escape(date_str) + r'\b', '', title).strip()
+                
+                # Also remove month + day format
+                month_day = date_obj.strftime('%B %d')
+                title = re.sub(r'\b' + re.escape(month_day) + r'\b', '', title).strip()
+                
+                # Remove some common words that don't add meaning
+                for word in ["is", "will be", "the", "on", "at", "by", "for", "this", "that"]:
+                    title = re.sub(r'\b' + re.escape(word) + r'\b', '', title)
+                
+                # Clean up spacing and punctuation
+                title = re.sub(r'\s+', ' ', title).strip()
+                title = re.sub(r'^[^a-zA-Z0-9]+', '', title)
+                title = re.sub(r'[^a-zA-Z0-9]+$', '', title)
+                title = title.strip()
+                
+                # Make sure title starts with a capital letter
+                if title and len(title) > 0:
+                    title = title[0].upper() + title[1:]
+        
+        # Create event dictionary (only title and date)
         event = {
             "title": title,
             "date": date_formatted
@@ -406,8 +441,9 @@ def extract_structured_events(text):
                 pass
                 
         # Add to results and mark this date as seen
-        structured_events.append(event)
-        seen_dates[date_formatted] = True
+        if title and len(title) > 3:  # Only add if we have a meaningful title
+            structured_events.append(event)
+            seen_dates[date_formatted] = True
         
     # Sort events by date
     structured_events.sort(key=lambda x: x["date"])

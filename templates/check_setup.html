@@ -11,7 +11,10 @@
             </div>
             <div class="card-body">
                 <div class="alert alert-info">
-                    <p>This page checks if your Google OAuth credentials are properly configured.</p>
+                    <h5 class="alert-heading"><i class="bi bi-info-circle"></i> Setup Check</h5>
+                    <p>This page helps you set up Google OAuth integration to add extracted events directly to your Google Calendar.</p>
+                    <hr>
+                    <p class="mb-0">Follow the steps below to enable Google Calendar integration with this application.</p>
                 </div>
                 
                 <h4 class="mb-3">Credentials Status</h4>
@@ -54,21 +57,68 @@
                             <code>{{ setup_info.redirect_url }}</code>
                         </div>
                         
-                        <p>To configure Google OAuth:</p>
-                        <ol>
-                            <li>Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a></li>
-                            <li>Create or select your project</li>
-                            <li>Configure the OAuth consent screen:
-                                <ul>
-                                    <li>Set User Type to External</li>
-                                    <li>Add required app information</li>
-                                    <li>Add scopes: .../auth/userinfo.email, .../auth/userinfo.profile, .../auth/calendar.events</li>
-                                </ul>
+                        <p><strong>Step-by-Step Google OAuth Setup:</strong></p>
+                        <ol class="list-group list-group-numbered mb-3">
+                            <li class="list-group-item d-flex align-items-start">
+                                <div>
+                                    <strong><i class="bi bi-cloud"></i> Visit Google Cloud Console</strong>
+                                    <p class="mb-0">Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" class="text-decoration-none">Google Cloud Console</a> and sign in with your Google account.</p>
+                                </div>
                             </li>
-                            <li>Create OAuth 2.0 Client ID credentials</li>
-                            <li>Add the redirect URI shown above to authorized redirect URIs</li>
-                            <li>Enable the Google Calendar API</li>
-                            <li>Set your CLIENT_ID and CLIENT_SECRET as environment variables</li>
+                            <li class="list-group-item d-flex align-items-start">
+                                <div>
+                                    <strong><i class="bi bi-folder-plus"></i> Create/Select a Project</strong>
+                                    <p class="mb-0">Create a new project or select an existing one.</p>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex align-items-start">
+                                <div>
+                                    <strong><i class="bi bi-shield-lock"></i> Configure OAuth Consent Screen</strong>
+                                    <ul>
+                                        <li>Click "OAuth consent screen" in the left sidebar</li>
+                                        <li>Select "External" for User Type</li>
+                                        <li>Enter your app name and contact information</li>
+                                        <li>Add the following scopes:
+                                            <ul>
+                                                <li><code>.../auth/userinfo.email</code></li>
+                                                <li><code>.../auth/userinfo.profile</code></li>
+                                                <li><code>.../auth/calendar.events</code></li>
+                                            </ul>
+                                        </li>
+                                        <li>Add test users (your email) if required</li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex align-items-start">
+                                <div>
+                                    <strong><i class="bi bi-key"></i> Create OAuth 2.0 Client ID</strong>
+                                    <ul>
+                                        <li>Click "Credentials" in the left sidebar</li>
+                                        <li>Click "Create Credentials" and select "OAuth client ID"</li>
+                                        <li>Select "Web application" as the Application type</li>
+                                        <li>Add the exact Redirect URI shown above in the "Authorized redirect URIs" section</li>
+                                        <li>Click "Create" and note your Client ID and Client Secret</li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex align-items-start">
+                                <div>
+                                    <strong><i class="bi bi-calendar4-week"></i> Enable Google Calendar API</strong>
+                                    <ul>
+                                        <li>Go to "Library" in the left sidebar</li>
+                                        <li>Search for "Google Calendar API"</li>
+                                        <li>Select and enable the API for your project</li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="list-group-item d-flex align-items-start">
+                                <div>
+                                    <strong><i class="bi bi-gear"></i> Add Environment Variables</strong>
+                                    <p class="mb-0">Set the following environment variables in your .env file:</p>
+                                    <code>GOOGLE_OAUTH_CLIENT_ID=your_client_id</code><br>
+                                    <code>GOOGLE_OAUTH_CLIENT_SECRET=your_client_secret</code>
+                                </div>
+                            </li>
                         </ol>
                     </div>
                 </div>

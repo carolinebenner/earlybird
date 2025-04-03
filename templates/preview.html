@@ -7,11 +7,11 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
-                <h2 class="card-title">Preview Extracted Events</h2>
+                <h2 class="card-title">Preview Assignment Deadlines & Events</h2>
             </div>
             <div class="card-body">
                 <p class="card-text">
-                    The following dates were extracted from your document. Select the events you want to generate calendar files for.
+                    The following assignments, exams, and deadlines were extracted from your document. Select the events you want to generate calendar files for.
                 </p>
                 
                 <form action="{{ url_for('generate_calendar') }}" method="post">
@@ -23,9 +23,9 @@
                             <thead>
                                 <tr>
                                     <th width="5%">Select</th>
-                                    <th width="15%">Date</th>
+                                    <th width="20%">Date</th>
                                     <th width="10%">Confidence</th>
-                                    <th width="70%">Event Details</th>
+                                    <th width="65%">Event Details</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,23 +57,8 @@
                                                     value="{{ event.date_formatted }}">
                                             </div>
                                         </div>
-                                        <div class="mb-2">
-                                            <label for="description_{{ event.id }}" class="form-label">Description</label>
-                                            <textarea class="form-control" id="description_{{ event.id }}" name="description_{{ event.id }}" rows="3">{{ event.full_description }}</textarea>
-                                        </div>
-                                        <div class="mb-2">
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" 
-                                                data-bs-toggle="collapse" 
-                                                data-bs-target="#context_{{ event.id }}" 
-                                                aria-expanded="false">
-                                                Show Context
-                                            </button>
-                                            <div class="collapse mt-2" id="context_{{ event.id }}">
-                                                <div class="card card-body bg-dark">
-                                                    <pre>{{ event.description }}</pre>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <!-- Description field (hidden but still sent in the form) -->
+                                        <input type="hidden" id="description_{{ event.id }}" name="description_{{ event.id }}" value="{{ event.title }}">
                                     </td>
                                 </tr>
                                 {% endfor %}

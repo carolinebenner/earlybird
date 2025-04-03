@@ -7,11 +7,14 @@
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header">
-                <h2 class="card-title" Extract Dates from Documents</h2>
+                <h2 class="card-title">Extract Dates from Documents</h2>
             </div>
             <div class="card-body">
                 <p class="card-text">
-                    Upload a document file to extract dates and generate calendar events (.ics files).
+                    Upload your syllabus, course outline or assignment document to automatically extract important dates and deadlines, then generate calendar events (.ics files) for your digital calendar.
+                </p>
+                <p class="card-text">
+                    <i class="bi bi-info-circle"></i> The system automatically identifies assignments, exams, quizzes, and other academic deadlines, saving you the time of manually entering them into your calendar.
                 </p>
                 
                 <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" class="mt-4">
@@ -44,11 +47,36 @@
             </div>
             <div class="card-body">
                 <ol class="list-group list-group-numbered">
-                    <li class="list-group-item">Upload a document containing dates</li>
-                    <li class="list-group-item">The system will analyze and extract dates</li>
-                    <li class="list-group-item">Review and select which dates to convert to calendar events</li>
-                    <li class="list-group-item">Download the generated .ics files</li>
-                    <li class="list-group-item">Import the .ics files into your calendar application</li>
+                    <li class="list-group-item d-flex align-items-start">
+                        <div>
+                            <strong><i class="bi bi-upload"></i> Upload a Document</strong>
+                            <p class="mb-0">Upload any syllabus, course outline, or assignment document (PDF, Word, or text).</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-start">
+                        <div>
+                            <strong><i class="bi bi-search"></i> Smart Date Extraction</strong>
+                            <p class="mb-0">The system automatically scans for assignment due dates, exam dates, and other academic deadlines.</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-start">
+                        <div>
+                            <strong><i class="bi bi-pencil-square"></i> Review & Edit</strong>
+                            <p class="mb-0">Check the extracted dates, edit titles, and set specific times for your events before generating the calendar files.</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-start">
+                        <div>
+                            <strong><i class="bi bi-download"></i> Download Calendar Files</strong>
+                            <p class="mb-0">Get your .ics files, which are compatible with all major calendar applications including Google Calendar, Apple Calendar, and Outlook.</p>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-start">
+                        <div>
+                            <strong><i class="bi bi-calendar-check"></i> Import or Automatically Add</strong>
+                            <p class="mb-0">Import the .ics files into your preferred calendar, or sign in with Google to add events directly to your Google Calendar.</p>
+                        </div>
+                    </li>
                 </ol>
             </div>
         </div>
