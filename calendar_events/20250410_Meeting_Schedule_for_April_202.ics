@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Date Extractor//dateextractor.py//EN
+BEGIN:VEVENT
+SUMMARY:Meeting Schedule for April 2025
+DTSTART:20250410T140000
+DTEND:20250410T150000
+UID:34a80f4d-8488-46fc-bdd4-adc598a88e24
+DESCRIPTION:Meeting Schedule for April 2025\n\nTeam Planning Session\nDate
+ : April 10\, 2025\nTime: 2:00 PM - 4:00 PM\nLocation: Conference Room A\nD
+ escription: Quarterly planning session to discuss Q2 goals and projects.\n
+ \nProduct Demo\nDate: April 15\, 2025\nTime: 10:30 AM\nLocation: Virtual M
+ eeting Room\nDescription: Demonstration o
+END:VEVENT
+END:VCALENDAR
