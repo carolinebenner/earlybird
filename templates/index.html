@@ -28,6 +28,16 @@
             </div>
         </div>
         
+        {% if not current_user.is_authenticated %}
+        <div class="alert alert-info mt-4">
+            <h4 class="alert-heading">Google Integration Status</h4>
+            <p>In some development environments, Google Authentication may be restricted due to network limitations.</p>
+            <hr>
+            <p class="mb-0">If you experience issues with Google login, you can still use the application's core date extraction and .ics file generation features.</p>
+            <p>For more details and troubleshooting, visit the <a href="{{ url_for('check_google_setup') }}" class="alert-link">Google Setup Check</a> page.</p>
+        </div>
+        {% endif %}
+        
         <div class="card mt-4">
             <div class="card-header">
                 <h3 class="card-title">How It Works</h3>

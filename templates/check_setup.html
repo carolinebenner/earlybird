@@ -28,6 +28,22 @@
                             {{ setup_info.client_secret_status }}
                         </span>
                     </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Google API Connectivity
+                        <span class="badge {% if setup_info.google_connectivity == 'Connected' %}bg-success{% else %}bg-warning{% endif %}">
+                            {{ setup_info.google_connectivity }}
+                        </span>
+                    </li>
+                    {% if setup_info.google_error %}
+                    <li class="list-group-item">
+                        <div class="alert alert-warning">
+                            <strong>Connection Error:</strong> {{ setup_info.google_error }}
+                            <div class="mt-2">
+                                <p>This could be due to network restrictions in the development environment. The application may still work locally but Google authentication features will be limited.</p>
+                            </div>
+                        </div>
+                    </li>
+                    {% endif %}
                 </ul>
                 
                 <h4 class="mb-3">Redirect URI Configuration</h4>

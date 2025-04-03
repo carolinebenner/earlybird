@@ -90,10 +90,27 @@ def check_google_setup():
     # Get current redirect URL
     from google_auth import DEV_REDIRECT_URL
     
+    # Test connectivity to Google services
+    google_connectivity = "Unknown"
+    google_error = None
+    try:
+        import requests
+        response = requests.get("https://accounts.google.com/.well-known/openid-configuration", timeout=5)
+        if response.status_code == 200:
+            google_connectivity = "Connected"
+        else:
+            google_connectivity = "Failed"
+            google_error = f"Received status code {response.status_code} from Google"
+    except Exception as e:
+        google_connectivity = "Failed"
+        google_error = str(e)
+    
     setup_info = {
         "client_id_status": "Set" if client_id != "Not set" else "Not set",
         "client_secret_status": client_secret_status,
         "redirect_url": DEV_REDIRECT_URL,
+        "google_connectivity": google_connectivity,
+        "google_error": google_error
     }
     
     return render_template('check_setup.html', setup_info=setup_info)

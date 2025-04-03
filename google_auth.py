@@ -92,12 +92,21 @@ def callback():
         redirect_url=DEV_REDIRECT_URL,
         code=code
     )
-    token_response = requests.post(
-        token_url,
-        headers=headers,
-        data=body,
-        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
-    )
+    # Only use authentication if both client ID and secret are available
+    if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
+        token_response = requests.post(
+            token_url,
+            headers=headers,
+            data=body,
+            auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
+        )
+    else:
+        # Fallback without authentication - will likely fail but avoids errors
+        token_response = requests.post(
+            token_url,
+            headers=headers,
+            data=body,
+        )
 
     # Parse the tokens
     client.parse_request_body_response(json.dumps(token_response.json()))
@@ -190,9 +199,12 @@ def add_event_to_google_calendar(event_data):
                 }
                 
                 # Make the request
-                response = requests.post(token_endpoint, data=refresh_request)
-                if response.status_code != 200:
-                    return False, "Failed to refresh token, please log in again"
+                try:
+                    response = requests.post(token_endpoint, data=refresh_request)
+                    if response.status_code != 200:
+                        return False, "Failed to refresh token, please log in again"
+                except Exception as conn_error:
+                    return False, f"Could not connect to Google: {str(conn_error)}"
                 
                 # Update token data
                 new_token_data = response.json()
