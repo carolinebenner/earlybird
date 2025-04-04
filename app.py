@@ -156,6 +156,74 @@ def check_microsoft_setup():
     return render_template('check_microsoft_setup.html', setup_info=setup_info)
 
 
+@app.route('/microsoft-setup-detail')
+def microsoft_setup_detail():
+    """Display detailed Microsoft OAuth setup instructions."""
+    replit_domain = os.environ.get("REPLIT_DEV_DOMAIN")
+    redirect_uri = f"https://{replit_domain}/microsoft_login/callback"
+    
+    return f"""
+    <html>
+    <head>
+        <title>Microsoft OAuth Setup</title>
+        <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    </head>
+    <body class="container mt-5">
+        <div class="card bg-dark text-light">
+            <div class="card-header">
+                <h2>Microsoft OAuth Setup Instructions</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <strong>Error Detected:</strong> The Microsoft login is failing with "No reply address provided" or "invalid_request" errors.
+                    This means the redirect URI in your Microsoft Azure App registration doesn't match the one our application is using.
+                </div>
+                
+                <h4>Follow these steps to set up Microsoft authentication:</h4>
+                <ol class="list-group list-group-numbered">
+                    <li class="list-group-item bg-dark text-light">Sign in to the <a href="https://portal.azure.com/" target="_blank" class="text-info">Azure Portal</a></li>
+                    <li class="list-group-item bg-dark text-light">Go to Azure Active Directory > App Registrations</li>
+                    <li class="list-group-item bg-dark text-light">Find and select your application</li>
+                    <li class="list-group-item bg-dark text-light">Click on "Authentication" in the left menu</li>
+                    <li class="list-group-item bg-dark text-light">Under "Redirect URIs", click "Add platform" and select "Web"</li>
+                    <li class="list-group-item bg-dark text-light">Add the following exact Redirect URI:
+                        <div class="alert alert-info mt-2">
+                            <code>{redirect_uri}</code>
+                            <button class="btn btn-sm btn-primary float-end" 
+                                    onclick="navigator.clipboard.writeText('{redirect_uri}')">
+                                Copy
+                            </button>
+                        </div>
+                    </li>
+                    <li class="list-group-item bg-dark text-light">Save your changes</li>
+                </ol>
+                
+                <h4 class="mt-4">Required API Permissions:</h4>
+                <p>Make sure your app has the following permissions:</p>
+                <ul class="list-group">
+                    <li class="list-group-item bg-dark text-light">Microsoft Graph > openid</li>
+                    <li class="list-group-item bg-dark text-light">Microsoft Graph > profile</li>
+                    <li class="list-group-item bg-dark text-light">Microsoft Graph > email</li>
+                    <li class="list-group-item bg-dark text-light">Microsoft Graph > offline_access</li>
+                    <li class="list-group-item bg-dark text-light">Microsoft Graph > Calendars.ReadWrite</li>
+                </ul>
+                
+                <div class="alert alert-info mt-4">
+                    <h5>Debug Information:</h5>
+                    <p>Current application redirect URI: <code>{redirect_uri}</code></p>
+                    <p>Check that this exact URL is registered in your Azure App Registration.</p>
+                </div>
+                
+                <div class="mt-4">
+                    <a href="/" class="btn btn-primary">Return to Homepage</a>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     """Handle file upload and process it for dates."""

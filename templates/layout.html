@@ -58,6 +58,11 @@
                                 <a class="dropdown-item" href="{{ url_for('microsoft_auth.login') }}">
                                     <i class="bi bi-microsoft"></i> Login with Microsoft
                                 </a>
+                                <div class="dropdown-item text-muted small">
+                                    <a href="{{ url_for('microsoft_setup_detail') }}" class="text-info">
+                                        <small>Trouble signing in? Click here</small>
+                                    </a>
+                                </div>
                             </li>
                         </ul>
                     </li>

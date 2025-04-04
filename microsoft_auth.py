@@ -127,29 +127,113 @@ def callback():
     )
     
     # Parse the token response
-    token_data = token_response.json()
-    if "error" in token_data:
-        return f"Error obtaining token: {token_data['error']}", 400
+    try:
+        token_data = token_response.json()
+        current_app.logger.info(f"Microsoft token response status: {token_response.status_code}")
+        current_app.logger.info(f"Microsoft token response data: {json.dumps(token_data)}")
+        
+        if "error" in token_data:
+            error_msg = token_data.get('error')
+            error_desc = token_data.get('error_description', '')
+            current_app.logger.error(f"Error obtaining Microsoft token: {error_msg} - {error_desc}")
+            
+            # Return a more user-friendly error message with a link to the troubleshooting page
+            return f"""
+            <div class="container mt-5">
+                <div class="alert alert-danger">
+                    <h4 class="alert-heading">Microsoft Authentication Error</h4>
+                    <p>We couldn't complete your sign-in with Microsoft.</p>
+                    <p><strong>Error:</strong> {error_msg}</p>
+                    <p><strong>Details:</strong> {error_desc}</p>
+                    <hr>
+                    <p>This is often caused by incorrect redirect URI configuration in your Azure App.</p>
+                    <a href="{url_for('microsoft_setup_detail')}" class="btn btn-warning">View Troubleshooting Guide</a>
+                    <a href="{url_for('index')}" class="btn btn-primary">Return Home</a>
+                </div>
+            </div>
+            """, 400
+    except Exception as e:
+        current_app.logger.error(f"Exception parsing Microsoft token response: {str(e)}")
+        return f"An error occurred during Microsoft authentication: {str(e)}", 500
     
     # Store tokens
     access_token = token_data.get("access_token")
     refresh_token = token_data.get("refresh_token")
     
     # Get user information from Microsoft Graph API
-    user_info_url = f"{MS_GRAPH_API}/me"
-    user_info_response = requests.get(
-        user_info_url, 
-        headers={"Authorization": f"Bearer {access_token}"}
-    )
-    
-    user_info = user_info_response.json()
+    try:
+        user_info_url = f"{MS_GRAPH_API}/me"
+        current_app.logger.info(f"Requesting user info from {user_info_url}")
+        
+        user_info_response = requests.get(
+            user_info_url, 
+            headers={"Authorization": f"Bearer {access_token}"}
+        )
+        
+        current_app.logger.info(f"User info response status: {user_info_response.status_code}")
+        user_info = user_info_response.json()
+        
+        # Log the user info for debugging
+        current_app.logger.info(f"Microsoft user info response: {json.dumps(user_info)}")
+        
+        # Check for error in response
+        if "error" in user_info:
+            error_code = user_info.get("error", {}).get("code", "Unknown")
+            error_message = user_info.get("error", {}).get("message", "Unknown error")
+            current_app.logger.error(f"Error getting Microsoft user info: {error_code} - {error_message}")
+            
+            return f"""
+            <div class="container mt-5">
+                <div class="alert alert-danger">
+                    <h4 class="alert-heading">Microsoft API Error</h4>
+                    <p>We received an error from Microsoft when trying to get your profile information.</p>
+                    <p><strong>Error:</strong> {error_code}</p>
+                    <p><strong>Message:</strong> {error_message}</p>
+                    <hr>
+                    <p>This is likely due to insufficient permissions. Please check your app's API permissions in Azure.</p>
+                    <a href="{url_for('microsoft_setup_detail')}" class="btn btn-warning">View Troubleshooting Guide</a>
+                    <a href="{url_for('index')}" class="btn btn-primary">Return Home</a>
+                </div>
+            </div>
+            """, 400
+    except Exception as e:
+        current_app.logger.error(f"Exception getting Microsoft user info: {str(e)}")
+        return f"An error occurred while retrieving your profile from Microsoft: {str(e)}", 500
     
     # Get user email and name
     email = user_info.get("mail") or user_info.get("userPrincipalName")
-    name = user_info.get("displayName") or email.split("@")[0]
+    
+    # Add debug logging
+    current_app.logger.info(f"Microsoft user info: {json.dumps(user_info)}")
     
     if not email:
-        return "Couldn't retrieve email from Microsoft. Access denied.", 400
+        current_app.logger.error("Couldn't retrieve email from Microsoft. User info: " + json.dumps(user_info))
+        error_message = """
+        <div class="container mt-5">
+            <div class="alert alert-danger">
+                <h4 class="alert-heading">Microsoft Authentication Error</h4>
+                <p>We couldn't retrieve your email address from Microsoft. This is required to create your account.</p>
+                <hr>
+                <p>This could be due to:</p>
+                <ul>
+                    <li>Missing required Microsoft Graph permissions</li>
+                    <li>You didn't grant consent to access your email address</li>
+                    <li>Your Microsoft account doesn't have an email address</li>
+                </ul>
+                <p>Please try again or use a different authentication method.</p>
+                <a href="{}" class="btn btn-warning">Troubleshooting Guide</a>
+                <a href="{}" class="btn btn-primary">Return Home</a>
+            </div>
+        </div>
+        """.format(url_for('microsoft_setup_detail'), url_for('index'))
+        return error_message, 400
+    
+    # Only try to split email if it exists
+    name = user_info.get("displayName")
+    if not name and email:
+        name = email.split("@")[0]
+    elif not name:
+        name = "Microsoft User"  # Fallback username if neither displayName nor email is available
     
     # Look up user in database, or create if new
     user = User.query.filter_by(email=email).first()

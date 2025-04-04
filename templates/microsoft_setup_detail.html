@@ -1,0 +1,246 @@
+{% extends "layout.html" %}
+
+{% block title %}Microsoft OAuth Detailed Setup Guide{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h2 class="card-title">Microsoft OAuth Troubleshooting</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <h4 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Common Error: Redirect URI Mismatch</h4>
+                    <p>If you're seeing errors like "No reply address provided" or "invalid_request", the most common cause is a <strong>redirect URI mismatch</strong> between what's configured in your Azure App Registration and what our application is using.</p>
+                </div>
+                
+                <div class="alert alert-info">
+                    <h5 class="alert-heading">Your Current Redirect URI</h5>
+                    <p>This is the exact redirect URI our application is using:</p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" value="{{ redirect_uri }}" id="exactRedirectUri" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyExactRedirectUri()">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+                    <p class="small mt-2"><strong>Note:</strong> This must match EXACTLY what's in your Azure App registration (including the protocol, domain, and path).</p>
+                </div>
+                
+                <h3 class="mt-4">Step-by-Step Troubleshooting</h3>
+                
+                <div class="accordion mt-3" id="troubleshootingAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                1. Verify Redirect URI in Azure Portal
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#troubleshootingAccordion">
+                            <div class="accordion-body">
+                                <ol class="list-group list-group-numbered">
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">Sign in to the Azure Portal</div>
+                                            Go to <a href="https://portal.azure.com/" target="_blank">portal.azure.com</a>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">Navigate to App Registrations</div>
+                                            Search for "App registrations" in the search bar and select it
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">Find Your App</div>
+                                            Select your app from the list (the one you created for this project)
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">Check Authentication Settings</div>
+                                            In the left sidebar, click on "Authentication"
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">Verify or Update Redirect URI</div>
+                                            Under "Web" > "Redirect URIs", ensure the URI exactly matches the one shown above.<br>
+                                            <strong class="text-warning">Important:</strong> If you need to change it, make sure to click "Save" after updating.
+                                        </div>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                2. Check API Permissions
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#troubleshootingAccordion">
+                            <div class="accordion-body">
+                                <ol class="list-group list-group-numbered">
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">Navigate to API Permissions</div>
+                                            From your app's overview page, select "API permissions" in the left sidebar
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">Verify Required Permissions</div>
+                                            Ensure you have the following Microsoft Graph permissions:
+                                            <ul class="mt-2">
+                                                <li>User.Read (Delegated)</li>
+                                                <li>Calendars.ReadWrite (Delegated)</li>
+                                                <li>offline_access (Delegated)</li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">Add Missing Permissions</div>
+                                            If any are missing, click "Add a permission" > "Microsoft Graph" > "Delegated permissions" and add them
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                                        <div class="ms-2 me-auto">
+                                            <div class="fw-bold">Grant Admin Consent</div>
+                                            Click "Grant admin consent for [your directory]" button if you have admin rights
+                                        </div>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                3. Verify Environment Variables
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#troubleshootingAccordion">
+                            <div class="accordion-body">
+                                <p>Make sure these environment variables are set in your Replit:</p>
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Variable Name</th>
+                                            <th>Current Status</th>
+                                            <th>How to Get It</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>MICROSOFT_OAUTH_CLIENT_ID</td>
+                                            <td>
+                                                {% if client_id_status == "Set" %}
+                                                <span class="badge bg-success">Set</span>
+                                                {% else %}
+                                                <span class="badge bg-danger">Not Set</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>Copy from Azure Portal > App registrations > Your app > Overview > Application (client) ID</td>
+                                        </tr>
+                                        <tr>
+                                            <td>MICROSOFT_OAUTH_CLIENT_SECRET</td>
+                                            <td>
+                                                {% if client_secret_status == "Set" %}
+                                                <span class="badge bg-success">Set</span>
+                                                {% else %}
+                                                <span class="badge bg-danger">Not Set</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>Create in Azure Portal > App registrations > Your app > Certificates & secrets > Client secrets > New client secret</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                4. Common Error Messages & Solutions
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#troubleshootingAccordion">
+                            <div class="accordion-body">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-danger text-white">
+                                        No reply address was provided
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">This error occurs when the redirect URI sent in the login request doesn't match any URI registered in your Azure app.</p>
+                                        <h6 class="card-subtitle mb-2 text-muted">Solution:</h6>
+                                        <p>Add the exact Redirect URI shown at the top of this page to your Azure app registration.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-3">
+                                    <div class="card-header bg-danger text-white">
+                                        invalid_request or AADSTS50011
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">This typically indicates a problem with the reply URL or redirect URI configuration.</p>
+                                        <h6 class="card-subtitle mb-2 text-muted">Solution:</h6>
+                                        <ul>
+                                            <li>Ensure the redirect URI in Azure matches exactly what our app uses (shown above)</li>
+                                            <li>Check that you've selected the "Web" platform in Authentication settings</li>
+                                            <li>Verify that you're using the same Microsoft account for testing as you used to create the app</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="card">
+                                    <div class="card-header bg-danger text-white">
+                                        AADSTS700016 or Consent Required
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">The application requires user consent or admin consent for specific permissions.</p>
+                                        <h6 class="card-subtitle mb-2 text-muted">Solution:</h6>
+                                        <p>When the consent prompt appears during login, make sure to click "Yes" or "Accept".</p>
+                                        <p>If you're an admin, go to API Permissions in your app registration and click "Grant admin consent".</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-success mt-4">
+                    <h5 class="alert-heading"><i class="bi bi-check-circle"></i> After Making Changes</h5>
+                    <p>After updating your Azure app configuration, try logging in again. If you still encounter issues, check this troubleshooting page again for more specific error messages.</p>
+                </div>
+                
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{{ url_for('check_microsoft_setup') }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Setup Check
+                    </a>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function copyExactRedirectUri() {
+    var copyText = document.getElementById("exactRedirectUri");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    
+    // Show a tooltip or some indication
+    alert("Redirect URI copied to clipboard!");
+}
+</script>
+{% endblock %}
