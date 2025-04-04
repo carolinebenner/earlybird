@@ -33,11 +33,18 @@
         
         {% if not current_user.is_authenticated %}
         <div class="alert alert-info mt-4">
-            <h4 class="alert-heading">Google Integration Status</h4>
-            <p>In some development environments, Google Authentication may be restricted due to network limitations.</p>
+            <h4 class="alert-heading">Calendar Integration Options</h4>
+            <p>This app supports both Google Calendar and Microsoft Outlook Calendar integration.</p>
             <hr>
-            <p class="mb-0">If you experience issues with Google login, you can still use the application's core date extraction and .ics file generation features.</p>
-            <p>For more details and troubleshooting, visit the <a href="{{ url_for('check_google_setup') }}" class="alert-link">Google Setup Check</a> page.</p>
+            <p class="mb-0">You can use this app without logging in, or sign in to automatically add events to your preferred calendar.</p>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <a href="{{ url_for('check_google_setup') }}" class="alert-link"><i class="bi bi-google"></i> Google Calendar Setup</a>
+                </div>
+                <div class="col-md-6">
+                    <a href="{{ url_for('check_microsoft_setup') }}" class="alert-link"><i class="bi bi-microsoft"></i> Microsoft Outlook Setup</a>
+                </div>
+            </div>
         </div>
         {% endif %}
         
@@ -74,7 +81,7 @@
                     <li class="list-group-item d-flex align-items-start">
                         <div>
                             <strong><i class="bi bi-calendar-check"></i> Import or Automatically Add</strong>
-                            <p class="mb-0">Import the .ics files into your preferred calendar, or sign in with Google to add events directly to your Google Calendar.</p>
+                            <p class="mb-0">Import the .ics files into your preferred calendar, or sign in with Google or Microsoft to add events directly to your calendar.</p>
                         </div>
                     </li>
                 </ol>

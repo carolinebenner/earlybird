@@ -6,3 +6,4 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     google_token = db.Column(db.Text, nullable=True)
+    microsoft_token = db.Column(db.Text, nullable=True)

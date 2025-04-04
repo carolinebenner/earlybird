@@ -66,19 +66,58 @@
                         </table>
                     </div>
                     
-                    {% if current_user.is_authenticated %}
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" value="yes" id="add_to_google_calendar" name="add_to_google_calendar" checked>
-                        <label class="form-check-label" for="add_to_google_calendar">
-                            Add events to my Google Calendar
-                        </label>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Calendar Integration Options</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if current_user.is_authenticated and current_user.google_token %}
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" value="yes" id="add_to_google_calendar" name="add_to_google_calendar" checked>
+                                <label class="form-check-label" for="add_to_google_calendar">
+                                    <i class="bi bi-google"></i> Add events to my Google Calendar
+                                </label>
+                            </div>
+                            {% endif %}
+                            
+                            {% if current_user.is_authenticated and current_user.microsoft_token %}
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" value="yes" id="add_to_outlook_calendar" name="add_to_outlook_calendar" checked>
+                                <label class="form-check-label" for="add_to_outlook_calendar">
+                                    <i class="bi bi-microsoft"></i> Add events to my Microsoft Outlook Calendar
+                                </label>
+                            </div>
+                            {% endif %}
+                            
+                            {% if not current_user.is_authenticated %}
+                            <div class="alert alert-info mb-0">
+                                <i class="bi bi-info-circle"></i> 
+                                <p>Sign in to add events directly to your calendar:</p>
+                                <div class="mt-2">
+                                    <a href="{{ url_for('google_auth.login') }}" class="btn btn-outline-primary btn-sm me-2">
+                                        <i class="bi bi-google"></i> Login with Google
+                                    </a>
+                                    <a href="{{ url_for('microsoft_auth.login') }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-microsoft"></i> Login with Microsoft
+                                    </a>
+                                </div>
+                            </div>
+                            {% elif not current_user.google_token and not current_user.microsoft_token %}
+                            <div class="alert alert-warning mb-0">
+                                <i class="bi bi-exclamation-triangle"></i> 
+                                <p>You're logged in, but haven't connected any calendar services.</p>
+                                <div class="mt-2">
+                                    <a href="{{ url_for('google_auth.login') }}" class="btn btn-outline-primary btn-sm me-2">
+                                        <i class="bi bi-google"></i> Connect Google Calendar
+                                    </a>
+                                    <a href="{{ url_for('microsoft_auth.login') }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-microsoft"></i> Connect Outlook Calendar
+                                    </a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
-                    {% else %}
-                    <div class="alert alert-info mb-3">
-                        <i class="bi bi-info-circle"></i> 
-                        <a href="{{ url_for('google_auth.login') }}">Login with Google</a> to add events directly to your Google Calendar.
-                    </div>
-                    {% endif %}
                     
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Cancel</a>

@@ -49,6 +49,10 @@ with app.app_context():
 from google_auth import google_auth, add_event_to_google_calendar
 app.register_blueprint(google_auth)
 
+# Import and register Microsoft Auth blueprint
+from microsoft_auth import microsoft_auth, add_event_to_outlook_calendar
+app.register_blueprint(microsoft_auth)
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -115,6 +119,41 @@ def check_google_setup():
     }
     
     return render_template('check_setup.html', setup_info=setup_info)
+
+
+@app.route('/check-microsoft-setup')
+def check_microsoft_setup():
+    """Check Microsoft OAuth setup status."""
+    client_id = os.environ.get("MICROSOFT_OAUTH_CLIENT_ID", "Not set")
+    client_secret_status = "Set" if os.environ.get("MICROSOFT_OAUTH_CLIENT_SECRET") else "Not set"
+    
+    # Get current domain for redirect URL
+    redirect_uri = f"https://{os.environ.get('REPLIT_DEV_DOMAIN', 'localhost')}/microsoft_login/callback"
+    
+    # Test connectivity to Microsoft services
+    ms_connectivity = "Unknown"
+    ms_error = None
+    try:
+        import requests
+        response = requests.get("https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration", timeout=5)
+        if response.status_code == 200:
+            ms_connectivity = "Connected"
+        else:
+            ms_connectivity = "Failed"
+            ms_error = f"Received status code {response.status_code} from Microsoft"
+    except Exception as e:
+        ms_connectivity = "Failed"
+        ms_error = str(e)
+    
+    setup_info = {
+        "client_id_status": "Set" if client_id != "Not set" else "Not set",
+        "client_secret_status": client_secret_status,
+        "redirect_url": redirect_uri,
+        "ms_connectivity": ms_connectivity,
+        "ms_error": ms_error
+    }
+    
+    return render_template('check_microsoft_setup.html', setup_info=setup_info)
 
 
 @app.route('/upload', methods=['POST'])
@@ -292,8 +331,9 @@ def generate_calendar():
         return redirect(url_for('index'))
     
     created_files = []
-    google_calendar_results = []
+    calendar_results = []
     add_to_google = request.form.get('add_to_google_calendar') == 'yes'
+    add_to_outlook = request.form.get('add_to_outlook_calendar') == 'yes'
     
     for event_id in selected_events:
         for session_event in session_events:
@@ -330,20 +370,24 @@ def generate_calendar():
                     created_files.append(os.path.basename(filepath))
                     
                     # If user is logged in with Google and requested to add to Google Calendar
-                    if add_to_google and current_user.is_authenticated:
+                    if add_to_google and current_user.is_authenticated and current_user.google_token:
                         success, message = add_event_to_google_calendar(event_data)
-                        if success:
-                            google_calendar_results.append({
-                                'title': custom_title,
-                                'success': True,
-                                'message': 'Successfully added to your Google Calendar'
-                            })
-                        else:
-                            google_calendar_results.append({
-                                'title': custom_title,
-                                'success': False,
-                                'message': message
-                            })
+                        calendar_results.append({
+                            'title': custom_title,
+                            'success': success,
+                            'message': message,
+                            'calendar': 'Google'
+                        })
+                    
+                    # If user is logged in with Microsoft and requested to add to Outlook Calendar
+                    if add_to_outlook and current_user.is_authenticated and current_user.microsoft_token:
+                        success, message = add_event_to_outlook_calendar(event_data)
+                        calendar_results.append({
+                            'title': custom_title,
+                            'success': success,
+                            'message': message,
+                            'calendar': 'Outlook'
+                        })
                 
                 except Exception as e:
                     logger.error(f"Failed to create calendar event: {e}")
@@ -358,10 +402,16 @@ def generate_calendar():
     # Clear session data
     session.clear()
     
+    # Determine which calendar services the user is connected to
+    has_google = current_user.is_authenticated and current_user.google_token is not None
+    has_outlook = current_user.is_authenticated and current_user.microsoft_token is not None
+    
     return render_template('download.html', 
                           files=created_files, 
-                          google_calendar_results=google_calendar_results,
-                          is_authenticated=current_user.is_authenticated)
+                          calendar_results=calendar_results,
+                          is_authenticated=current_user.is_authenticated,
+                          has_google=has_google,
+                          has_outlook=has_outlook)
 
 
 @app.route('/download/<filename>')

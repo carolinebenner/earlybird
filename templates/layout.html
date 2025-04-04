@@ -20,8 +20,14 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('index') }}">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('check_google_setup') }}">Check Google Setup</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Setup & Configuration
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('check_google_setup') }}">Check Google Setup</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('check_microsoft_setup') }}">Check Microsoft Setup</a></li>
+                        </ul>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
@@ -29,14 +35,31 @@
                     <li class="nav-item">
                         <span class="nav-link">Welcome, {{ current_user.username }}</span>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('google_auth.logout') }}">Logout</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Account
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('google_auth.logout') }}">Logout</a></li>
+                        </ul>
                     </li>
                     {% else %}
-                    <li class="nav-item">
-                        <a class="btn btn-primary" href="{{ url_for('google_auth.login') }}">
-                            <i class="bi bi-google"></i> Login with Google
+                    <li class="nav-item dropdown">
+                        <a class="btn btn-primary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Login Options
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('google_auth.login') }}">
+                                    <i class="bi bi-google"></i> Login with Google
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('microsoft_auth.login') }}">
+                                    <i class="bi bi-microsoft"></i> Login with Microsoft
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     {% endif %}
                 </ul>

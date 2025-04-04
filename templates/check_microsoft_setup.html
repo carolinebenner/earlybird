@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+
+{% block title %}Microsoft OAuth Setup Check{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Microsoft OAuth Setup Check</h2>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    This page checks the setup status of Microsoft OAuth for connecting to Outlook Calendar.
+                </p>
+
+                <h4 class="mt-4">Setup Status</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th scope="row">Microsoft Client ID</th>
+                                <td>
+                                    {% if setup_info.client_id_status == "Set" %}
+                                    <span class="badge bg-success">Set</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Not Set</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Microsoft Client Secret</th>
+                                <td>
+                                    {% if setup_info.client_secret_status == "Set" %}
+                                    <span class="badge bg-success">Set</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Not Set</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Microsoft API Connectivity</th>
+                                <td>
+                                    {% if setup_info.ms_connectivity == "Connected" %}
+                                    <span class="badge bg-success">Connected</span>
+                                    {% elif setup_info.ms_connectivity == "Failed" %}
+                                    <span class="badge bg-danger">Failed</span>
+                                    <p class="small text-danger mt-1">{{ setup_info.ms_error }}</p>
+                                    {% else %}
+                                    <span class="badge bg-warning">Unknown</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-primary mt-4">
+                    <h5 class="alert-heading">Redirect URI (Required for Setup)</h5>
+                    <p class="alert-text">Use this URL when setting up your Microsoft OAuth App:</p>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="{{ setup_info.redirect_url }}" id="redirectUri" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyRedirectUri()">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+                </div>
+
+                <h4 class="mt-4">Setup Instructions</h4>
+                <ol class="list-group list-group-numbered mt-3">
+                    <li class="list-group-item">
+                        <h5>Create a Microsoft App Registration</h5>
+                        <p>Go to <a href="https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade" target="_blank">Azure Portal</a> and sign in with your Microsoft account.</p>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>Register a New Application</h5>
+                        <p>Click "New registration" and provide the following information:</p>
+                        <ul>
+                            <li>Name: Date Extractor (or your preferred name)</li>
+                            <li>Supported account types: "Accounts in any organizational directory and personal Microsoft accounts"</li>
+                            <li>Redirect URI: Web - paste the URL shown above</li>
+                        </ul>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>Add API Permissions</h5>
+                        <p>After registration, go to "API permissions" and add the following Microsoft Graph permissions:</p>
+                        <ul>
+                            <li>User.Read (Delegated)</li>
+                            <li>Calendars.ReadWrite (Delegated)</li>
+                            <li>offline_access (Delegated)</li>
+                        </ul>
+                        <p>Click "Add permissions" and then "Grant admin consent"</p>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>Create a Client Secret</h5>
+                        <p>Go to "Certificates & secrets", click "New client secret", provide a description and expiration, then click "Add".</p>
+                        <p class="text-warning">Important: Copy the secret value immediately (you won't be able to see it again)</p>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>Set Environment Variables</h5>
+                        <p>In your Replit, set these environment variables:</p>
+                        <ul>
+                            <li>MICROSOFT_OAUTH_CLIENT_ID: The Application (client) ID from the Overview page</li>
+                            <li>MICROSOFT_OAUTH_CLIENT_SECRET: The secret value you copied</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function copyRedirectUri() {
+    var copyText = document.getElementById("redirectUri");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    
+    // Show a tooltip or some indication
+    alert("Redirect URI copied to clipboard!");
+}
+</script>
+{% endblock %}
