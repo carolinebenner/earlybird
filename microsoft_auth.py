@@ -162,16 +162,74 @@ def callback():
     
     # Get user information from Microsoft Graph API
     try:
-        user_info_url = f"{MS_GRAPH_API}/me"
-        current_app.logger.info(f"Requesting user info from {user_info_url}")
+        # First, try to decode information from the ID token instead of making an API call
+        # This often works better with personal Microsoft accounts
+        current_app.logger.info("Attempting to extract user info from ID token")
+        id_token = token_data.get("id_token")
         
-        user_info_response = requests.get(
-            user_info_url, 
-            headers={"Authorization": f"Bearer {access_token}"}
-        )
-        
-        current_app.logger.info(f"User info response status: {user_info_response.status_code}")
-        user_info = user_info_response.json()
+        if id_token:
+            # The id_token is a JWT with three parts separated by dots
+            try:
+                # Get the payload part (second part) and decode it
+                import base64
+                import json
+                
+                # Split the token and get the payload part
+                token_parts = id_token.split('.')
+                if len(token_parts) >= 2:
+                    # Fix padding for base64 decode
+                    payload = token_parts[1]
+                    payload += '=' * ((4 - len(payload) % 4) % 4)
+                    
+                    # Decode the payload
+                    decoded_payload = base64.b64decode(payload)
+                    token_info = json.loads(decoded_payload)
+                    
+                    current_app.logger.info(f"Successfully extracted user info from ID token: {json.dumps(token_info)}")
+                    
+                    # Use the token info as user info
+                    user_info = token_info
+                    user_info_response = type('obj', (object,), {'status_code': 200})  # Mock response object
+                else:
+                    current_app.logger.error("Invalid ID token format")
+                    
+                    # Fall back to API call
+                    user_info_url = f"{MS_GRAPH_API}/me"
+                    current_app.logger.info(f"Fallback: Requesting user info from {user_info_url}")
+                    
+                    user_info_response = requests.get(
+                        user_info_url, 
+                        headers={"Authorization": f"Bearer {access_token}"}
+                    )
+                    
+                    current_app.logger.info(f"User info response status: {user_info_response.status_code}")
+                    user_info = user_info_response.json()
+            except Exception as e:
+                current_app.logger.error(f"Error decoding ID token: {str(e)}")
+                
+                # Fall back to API call
+                user_info_url = f"{MS_GRAPH_API}/me"
+                current_app.logger.info(f"Fallback: Requesting user info from {user_info_url}")
+                
+                user_info_response = requests.get(
+                    user_info_url, 
+                    headers={"Authorization": f"Bearer {access_token}"}
+                )
+                
+                current_app.logger.info(f"User info response status: {user_info_response.status_code}")
+                user_info = user_info_response.json()
+        else:
+            # No ID token, so use the API call
+            user_info_url = f"{MS_GRAPH_API}/me"
+            current_app.logger.info(f"Requesting user info from {user_info_url}")
+            
+            user_info_response = requests.get(
+                user_info_url, 
+                headers={"Authorization": f"Bearer {access_token}"}
+            )
+            
+            current_app.logger.info(f"User info response status: {user_info_response.status_code}")
+            user_info = user_info_response.json()
         
         # Log the user info for debugging
         current_app.logger.info(f"Microsoft user info response: {json.dumps(user_info)}")
@@ -227,7 +285,7 @@ def callback():
         return f"An error occurred while retrieving your profile from Microsoft: {str(e)}", 500
     
     # Get user email and name
-    email = user_info.get("mail") or user_info.get("userPrincipalName")
+    email = user_info.get("mail") or user_info.get("userPrincipalName") or user_info.get("email") or user_info.get("preferred_username")
     
     # Add debug logging
     current_app.logger.info(f"Microsoft user info: {json.dumps(user_info)}")
