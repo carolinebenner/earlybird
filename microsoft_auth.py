@@ -60,7 +60,9 @@ def login():
         return "Microsoft OAuth Client ID not set. Please configure the application.", 500
 
     # Get the redirect URI
-    redirect_uri = request.base_url.replace("http://", "https://") + "/callback"
+    # Use the correct Replit domain from environment variables
+    replit_domain = os.environ.get("REPLIT_DEV_DOMAIN")
+    redirect_uri = f"https://{replit_domain}/microsoft_login/callback"
     
     # Log the redirectURI for debugging
     current_app.logger.info(f"Microsoft login redirect URI: {redirect_uri}")
@@ -104,8 +106,9 @@ def callback():
     if not code:
         return "Authentication failed: No authorization code received.", 400
 
-    # Get the redirect URI
-    redirect_uri = request.base_url.replace("http://", "https://")
+    # Get the redirect URI - use the same URI as in the login function
+    replit_domain = os.environ.get("REPLIT_DEV_DOMAIN")
+    redirect_uri = f"https://{replit_domain}/microsoft_login/callback"
     
     # Prepare the token request
     token_url, headers, body = client.prepare_token_request(
