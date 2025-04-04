@@ -98,6 +98,9 @@ def login():
 @microsoft_auth.route("/microsoft_login/callback")
 def callback():
     """Handle the callback from Microsoft OAuth server"""
+    # Ensure json module is available
+    import json
+    
     if not MS_CLIENT_ID or not MS_CLIENT_SECRET:
         return "Microsoft OAuth not configured. Please set the environment variables.", 500
 
@@ -161,6 +164,10 @@ def callback():
     refresh_token = token_data.get("refresh_token")
     
     # Get user information from Microsoft Graph API
+    # Import modules at the top level
+    import base64
+    import json
+    
     try:
         # First, try to decode information from the ID token instead of making an API call
         # This often works better with personal Microsoft accounts
@@ -170,10 +177,6 @@ def callback():
         if id_token:
             # The id_token is a JWT with three parts separated by dots
             try:
-                # Get the payload part (second part) and decode it
-                import base64
-                import json
-                
                 # Split the token and get the payload part
                 token_parts = id_token.split('.')
                 if len(token_parts) >= 2:
@@ -183,7 +186,7 @@ def callback():
                     
                     # Decode the payload
                     decoded_payload = base64.b64decode(payload)
-                    token_info = json.loads(decoded_payload)
+                    token_info = json.loads(decoded_payload.decode('utf-8'))
                     
                     current_app.logger.info(f"Successfully extracted user info from ID token: {json.dumps(token_info)}")
                     
@@ -366,6 +369,9 @@ def add_event_to_outlook_calendar(event_data):
     Returns:
         tuple: (success, message) where success is a boolean and message is a string
     """
+    # Ensure json module is available
+    import json
+    
     if not current_user.is_authenticated or not current_user.microsoft_token:
         return False, "User not authenticated with Microsoft"
     
@@ -438,6 +444,9 @@ def refresh_microsoft_token():
     Returns:
         bool: True if successful, False otherwise
     """
+    # Ensure json module is available
+    import json
+    
     if not current_user.is_authenticated or not current_user.microsoft_token:
         return False
     
