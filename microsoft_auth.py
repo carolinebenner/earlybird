@@ -67,7 +67,7 @@ def login():
         MS_AUTH_ENDPOINT,
         redirect_uri=redirect_uri,
         scope=" ".join(SCOPES),
-        response_type="code",
+        # Note: response_type is automatically set to "code" by the WebApplicationClient
         prompt="select_account",  # Force account selection
     )
     
