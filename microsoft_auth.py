@@ -176,11 +176,30 @@ def callback():
         # Log the user info for debugging
         current_app.logger.info(f"Microsoft user info response: {json.dumps(user_info)}")
         
+        # Log request details for deeper debugging
+        current_app.logger.info(f"Microsoft access token (first 20 chars): {access_token[:20]}...")
+        current_app.logger.info(f"Token data: {json.dumps({k: v for k, v in token_data.items() if k != 'access_token' and k != 'refresh_token'})}")
+        
         # Check for error in response
         if "error" in user_info:
             error_code = user_info.get("error", {}).get("code", "Unknown")
             error_message = user_info.get("error", {}).get("message", "Unknown error")
+            inner_error = user_info.get("error", {}).get("innerError", {})
             current_app.logger.error(f"Error getting Microsoft user info: {error_code} - {error_message}")
+            current_app.logger.error(f"Inner error details: {json.dumps(inner_error)}")
+            
+            # Let's try a different MS Graph endpoint to see if it's a specific endpoint issue
+            try:
+                test_endpoint = f"{MS_GRAPH_API}/me/memberOf"
+                current_app.logger.info(f"Trying alternative endpoint: {test_endpoint}")
+                test_response = requests.get(
+                    test_endpoint,
+                    headers={"Authorization": f"Bearer {access_token}"}
+                )
+                current_app.logger.info(f"Alternative endpoint status: {test_response.status_code}")
+                current_app.logger.info(f"Alternative endpoint response: {test_response.text[:200]}...")
+            except Exception as e:
+                current_app.logger.error(f"Error testing alternative endpoint: {str(e)}")
             
             return f"""
             <div class="container mt-5">
@@ -189,8 +208,15 @@ def callback():
                     <p>We received an error from Microsoft when trying to get your profile information.</p>
                     <p><strong>Error:</strong> {error_code}</p>
                     <p><strong>Message:</strong> {error_message}</p>
+                    <p><strong>Inner Error:</strong> {json.dumps(inner_error)}</p>
                     <hr>
-                    <p>This is likely due to insufficient permissions. Please check your app's API permissions in Azure.</p>
+                    <p>This is likely due to insufficient permissions or configuration issues. Please check:</p>
+                    <ul>
+                        <li>API permissions are properly granted (User.Read is essential)</li>
+                        <li>Admin consent has been given for all permissions</li>
+                        <li>Your app is registered as a Web platform</li>
+                        <li>The redirect URI exactly matches: {request.base_url.replace("http://", "https://")}</li>
+                    </ul>
                     <a href="{url_for('microsoft_setup_detail')}" class="btn btn-warning">View Troubleshooting Guide</a>
                     <a href="{url_for('index')}" class="btn btn-primary">Return Home</a>
                 </div>

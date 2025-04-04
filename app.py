@@ -167,6 +167,21 @@ def microsoft_setup_detail():
     <head>
         <title>Microsoft OAuth Setup</title>
         <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+        <style>
+            .tab-content {
+                padding: 1rem;
+                border: 1px solid #666;
+                border-top: none;
+                border-radius: 0 0 0.25rem 0.25rem;
+            }
+            .code-block {
+                background-color: #333;
+                padding: 0.5rem;
+                border-radius: 0.25rem;
+                font-family: monospace;
+                word-break: break-all;
+            }
+        </style>
     </head>
     <body class="container mt-5">
         <div class="card bg-dark text-light">
@@ -174,51 +189,162 @@ def microsoft_setup_detail():
                 <h2>Microsoft OAuth Setup Instructions</h2>
             </div>
             <div class="card-body">
-                <div class="alert alert-warning">
-                    <strong>Error Detected:</strong> The Microsoft login is failing with "No reply address provided" or "invalid_request" errors.
-                    This means the redirect URI in your Microsoft Azure App registration doesn't match the one our application is using.
-                </div>
-                
-                <h4>Follow these steps to set up Microsoft authentication:</h4>
-                <ol class="list-group list-group-numbered">
-                    <li class="list-group-item bg-dark text-light">Sign in to the <a href="https://portal.azure.com/" target="_blank" class="text-info">Azure Portal</a></li>
-                    <li class="list-group-item bg-dark text-light">Go to Azure Active Directory > App Registrations</li>
-                    <li class="list-group-item bg-dark text-light">Find and select your application</li>
-                    <li class="list-group-item bg-dark text-light">Click on "Authentication" in the left menu</li>
-                    <li class="list-group-item bg-dark text-light">Under "Redirect URIs", click "Add platform" and select "Web"</li>
-                    <li class="list-group-item bg-dark text-light">Add the following exact Redirect URI:
-                        <div class="alert alert-info mt-2">
-                            <code>{redirect_uri}</code>
-                            <button class="btn btn-sm btn-primary float-end" 
-                                    onclick="navigator.clipboard.writeText('{redirect_uri}')">
-                                Copy
-                            </button>
-                        </div>
+                <ul class="nav nav-tabs" id="troubleshootingTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="redirect-tab" data-bs-toggle="tab" data-bs-target="#redirect" type="button" role="tab">Redirect URI</button>
                     </li>
-                    <li class="list-group-item bg-dark text-light">Save your changes</li>
-                </ol>
-                
-                <h4 class="mt-4">Required API Permissions:</h4>
-                <p>Make sure your app has the following permissions:</p>
-                <ul class="list-group">
-                    <li class="list-group-item bg-dark text-light">Microsoft Graph > openid</li>
-                    <li class="list-group-item bg-dark text-light">Microsoft Graph > profile</li>
-                    <li class="list-group-item bg-dark text-light">Microsoft Graph > email</li>
-                    <li class="list-group-item bg-dark text-light">Microsoft Graph > offline_access</li>
-                    <li class="list-group-item bg-dark text-light">Microsoft Graph > Calendars.ReadWrite</li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="permissions-tab" data-bs-toggle="tab" data-bs-target="#permissions" type="button" role="tab">API Permissions</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="advanced-tab" data-bs-toggle="tab" data-bs-target="#advanced" type="button" role="tab">Advanced Settings</button>
+                    </li>
                 </ul>
                 
-                <div class="alert alert-info mt-4">
-                    <h5>Debug Information:</h5>
-                    <p>Current application redirect URI: <code>{redirect_uri}</code></p>
-                    <p>Check that this exact URL is registered in your Azure App Registration.</p>
+                <div class="tab-content" id="troubleshootingTabsContent">
+                    <!-- REDIRECT URI TAB -->
+                    <div class="tab-pane fade show active" id="redirect" role="tabpanel">
+                        <div class="alert alert-warning">
+                            <strong>Error Detected:</strong> The Microsoft login is failing with "No reply address provided" or "invalid_request" errors.
+                            This means the redirect URI in your Microsoft Azure App registration doesn't match the one our application is using.
+                        </div>
+                        
+                        <h4>Follow these steps to set up the redirect URI:</h4>
+                        <ol class="list-group list-group-numbered">
+                            <li class="list-group-item bg-dark text-light">Sign in to the <a href="https://portal.azure.com/" target="_blank" class="text-info">Azure Portal</a></li>
+                            <li class="list-group-item bg-dark text-light">Go to Azure Active Directory > App Registrations</li>
+                            <li class="list-group-item bg-dark text-light">Find and select your application</li>
+                            <li class="list-group-item bg-dark text-light">Click on "Authentication" in the left menu</li>
+                            <li class="list-group-item bg-dark text-light">Under "Platform configurations", click "Add a platform" and select "Web"</li>
+                            <li class="list-group-item bg-dark text-light">Add the following exact Redirect URI:
+                                <div class="alert alert-info mt-2">
+                                    <code class="code-block">{redirect_uri}</code>
+                                    <button class="btn btn-sm btn-primary float-end" 
+                                            onclick="navigator.clipboard.writeText('{redirect_uri}')">
+                                        Copy
+                                    </button>
+                                </div>
+                            </li>
+                            <li class="list-group-item bg-dark text-light">Save your changes</li>
+                        </ol>
+                        
+                        <div class="alert alert-info mt-4">
+                            <h5>Important Notes:</h5>
+                            <ul>
+                                <li>The redirect URI must match exactly - including protocol (https://), domain, and path</li>
+                                <li>Even a slight difference (such as missing trailing slash or extra spaces) will cause auth to fail</li>
+                                <li>If you make changes, wait a few minutes for Azure to update before trying again</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- API PERMISSIONS TAB -->
+                    <div class="tab-pane fade" id="permissions" role="tabpanel">
+                        <div class="alert alert-warning">
+                            <strong>Error Detected:</strong> API permissions issues or "UnknownError" when accessing Microsoft Graph API.
+                            This is typically due to missing or not-consented permissions.
+                        </div>
+                        
+                        <h4>Follow these steps to fix the API permissions:</h4>
+                        <ol class="list-group list-group-numbered">
+                            <li class="list-group-item bg-dark text-light">Sign in to the <a href="https://portal.azure.com/" target="_blank" class="text-info">Azure Portal</a></li>
+                            <li class="list-group-item bg-dark text-light">Go to Azure Active Directory > App Registrations</li>
+                            <li class="list-group-item bg-dark text-light">Find and select your app</li>
+                            <li class="list-group-item bg-dark text-light">Click on "API permissions" in the left sidebar</li>
+                            <li class="list-group-item bg-dark text-light">Remove all existing permissions (click "..." next to each and select "Remove")</li>
+                            <li class="list-group-item bg-dark text-light">Click "Add a permission"</li>
+                            <li class="list-group-item bg-dark text-light">Select "Microsoft Graph"</li>
+                            <li class="list-group-item bg-dark text-light">Select "Delegated permissions"</li>
+                            <li class="list-group-item bg-dark text-light">
+                                Add the following permissions:
+                                <ul class="mt-2">
+                                    <li><strong>User.Read</strong> (essential for profile access)</li>
+                                    <li><strong>User.ReadBasic.All</strong></li>
+                                    <li><strong>email</strong> (for email address access)</li>
+                                    <li><strong>profile</strong> (for profile information)</li>
+                                    <li><strong>openid</strong> (for authentication)</li>
+                                    <li><strong>offline_access</strong> (for refresh tokens)</li>
+                                    <li><strong>Calendars.ReadWrite</strong> (for calendar operations)</li>
+                                </ul>
+                            </li>
+                            <li class="list-group-item bg-dark text-light bg-danger">
+                                <strong>CRITICAL STEP:</strong> Click the "Grant admin consent for [your directory]" button at the top.
+                                <div class="alert alert-danger mt-2">
+                                    Without admin consent, the app can't access your profile data even with the right permissions.
+                                </div>
+                            </li>
+                        </ol>
+                        
+                        <div class="alert alert-info mt-4">
+                            <h5>Common Permission Issues:</h5>
+                            <ul>
+                                <li>The <strong>User.Read</strong> permission is essential - make sure it's added and consented</li>
+                                <li>Microsoft's "email" scope is needed specifically to access the user's email address</li>
+                                <li>You must grant admin consent after adding permissions</li>
+                                <li>Permissions can take a few minutes to propagate after being added</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- ADVANCED SETTINGS TAB -->
+                    <div class="tab-pane fade" id="advanced" role="tabpanel">
+                        <h4>Advanced Configuration Settings</h4>
+                        
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Authentication Advanced Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <ol class="list-group list-group-numbered">
+                                    <li class="list-group-item bg-dark text-light">Go to "Authentication" in the left sidebar</li>
+                                    <li class="list-group-item bg-dark text-light">
+                                        Under "Implicit grant and hybrid flows", make sure both of these are checked:
+                                        <ul class="mt-2">
+                                            <li>Access tokens</li>
+                                            <li>ID tokens</li>
+                                        </ul>
+                                    </li>
+                                    <li class="list-group-item bg-dark text-light">
+                                        Under "Advanced settings", ensure:
+                                        <ul class="mt-2">
+                                            <li>Allow public client flows: <strong>Yes</strong></li>
+                                        </ul>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Verify Supported Account Types</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Go to "Overview" in the left sidebar and verify the "Supported account types" setting:</p>
+                                <div class="alert alert-info">
+                                    Make sure it's set to <strong>"Accounts in any organizational directory (Any Microsoft Entra ID tenant - Multitenant) and personal Microsoft accounts (e.g. Skype, Xbox)"</strong>
+                                </div>
+                                <p>This setting allows both work/school accounts and personal Microsoft accounts to authenticate.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <h5>Debug Information:</h5>
+                            <p>Current application redirect URI: <code class="code-block">{redirect_uri}</code></p>
+                            <p>Microsoft Graph API endpoint: <code>https://graph.microsoft.com/v1.0/me</code></p>
+                            <p>Server logs may contain more detailed error information.</p>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="mt-4">
                     <a href="/" class="btn btn-primary">Return to Homepage</a>
+                    <a href="/microsoft_login" class="btn btn-success ms-2">Try Microsoft Login Again</a>
                 </div>
             </div>
         </div>
+        
+        <!-- Bootstrap JS Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     </body>
     </html>
     """
