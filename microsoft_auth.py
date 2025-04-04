@@ -62,14 +62,32 @@ def login():
     # Get the redirect URI
     redirect_uri = request.base_url.replace("http://", "https://") + "/callback"
     
-    # Create authorization URL
-    auth_url = client.prepare_request_uri(
-        MS_AUTH_ENDPOINT,
-        redirect_uri=redirect_uri,
-        scope=" ".join(SCOPES),
-        # Note: response_type is automatically set to "code" by the WebApplicationClient
-        prompt="select_account",  # Force account selection
-    )
+    # Log the redirectURI for debugging
+    current_app.logger.info(f"Microsoft login redirect URI: {redirect_uri}")
+    
+    try:
+        # Try to verify the Microsoft URL is accessible
+        try:
+            verify_response = requests.head(MS_AUTH_ENDPOINT, timeout=5)
+            current_app.logger.info(f"MS Auth endpoint status: {verify_response.status_code}")
+        except Exception as e:
+            current_app.logger.error(f"Cannot connect to Microsoft auth endpoint: {str(e)}")
+            return f"""
+            <h1>Microsoft Authentication Service Unavailable</h1>
+            <p>We're unable to connect to Microsoft's authentication service at this time.</p>
+            <p>Error details: {str(e)}</p>
+            <p><a href="{url_for('index')}">Return to the homepage</a></p>
+            """, 503
+            
+        # Create authorization URL - Use simple string construction for debugging
+        scope_str = " ".join(SCOPES)
+        auth_url = f"{MS_AUTH_ENDPOINT}?client_id={MS_CLIENT_ID}&redirect_uri={redirect_uri}&scope={scope_str}&response_type=code&prompt=select_account"
+        
+        # Log the auth URL for debugging
+        current_app.logger.info(f"Microsoft login URL: {auth_url}")
+    except Exception as e:
+        current_app.logger.error(f"Error creating Microsoft auth URL: {str(e)}")
+        return f"Error creating Microsoft authentication URL: {str(e)}", 500
     
     # Redirect to Microsoft login
     return redirect(auth_url)
