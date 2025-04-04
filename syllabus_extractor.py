@@ -352,42 +352,81 @@ def extract_obhr_assessments(text):
             
             if date_obj:
                 # Get the surrounding context for title extraction
-                start = max(0, match.start() - 100)
-                end = min(len(text), match.end() + 100)
+                start = max(0, match.start() - 200)
+                end = min(len(text), match.end() + 200)
                 context = text[start:end]
                 
-                # Try to extract an assessment title
-                assessment_title = None
-                title_patterns = [
-                    r'(\bFinal\s+Exam\b)',
-                    r'(\bMidterm\b)',
-                    r'(\bQuiz\b)',
-                    r'(\bGroup Project\b)',
-                    r'(\bIndividual Project\b)',
-                    r'(\bTeam Assignment\b)',
-                    r'(\bIndividual Assignment\b)',
-                    r'(\bAssignment\s+\d+\b)',
-                    r'(\bPresentation\b)',
-                    r'(\bPaper\b)'
-                ]
+                # Try to find a detailed title using our improved function
+                # First determine the basic assessment type from context
+                assessment_type = "assessment"  # Default type
+                if 'quiz' in context.lower():
+                    assessment_type = 'quiz'
+                elif 'exam' in context.lower() or 'test' in context.lower():
+                    if 'final' in context.lower():
+                        assessment_type = 'final exam'
+                    elif 'midterm' in context.lower():
+                        assessment_type = 'midterm exam'
+                    else:
+                        assessment_type = 'exam'
+                elif 'project' in context.lower():
+                    if 'group' in context.lower():
+                        assessment_type = 'group project'
+                    elif 'team' in context.lower():
+                        assessment_type = 'team project'
+                    else:
+                        assessment_type = 'project'
+                elif 'paper' in context.lower() or 'report' in context.lower():
+                    assessment_type = 'paper'
+                elif 'presentation' in context.lower():
+                    assessment_type = 'presentation'
+                elif 'case' in context.lower():
+                    assessment_type = 'case study'
+                elif 'exercise' in context.lower():
+                    assessment_type = 'exercise'
+                elif 'assignment' in context.lower():
+                    if 'individual' in context.lower():
+                        assessment_type = 'individual assignment'
+                    elif 'group' in context.lower() or 'team' in context.lower():
+                        assessment_type = 'group assignment'
+                    else:
+                        assessment_type = 'assignment'
                 
-                for pattern in title_patterns:
-                    title_match = re.search(pattern, context, re.IGNORECASE)
-                    if title_match:
-                        assessment_title = title_match.group(1)
-                        break
+                # Try to extract a detailed title
+                detailed_title = extract_detailed_title(context, assessment_type)
                 
-                # If no specific title found, try to determine type from context
-                if not assessment_title:
-                    if 'quiz' in context.lower():
-                        assessment_title = 'Quiz'
-                    elif 'exam' in context.lower() or 'test' in context.lower():
-                        assessment_title = 'Exam'
-                    elif 'project' in context.lower():
-                        if 'group' in context.lower() or 'team' in context.lower():
-                            assessment_title = 'Group Project'
-                        else:
-                            assessment_title = 'Individual Project'
+                if detailed_title:
+                    assessment_title = detailed_title
+                else:
+                    # If detailed extraction fails, fall back to basic patterns
+                    assessment_title = None
+                    title_patterns = [
+                        r'(\bFinal\s+Exam\b)',
+                        r'(\bMidterm\b)',
+                        r'(\bQuiz\b)',
+                        r'(\bGroup Project\b)',
+                        r'(\bIndividual Project\b)',
+                        r'(\bTeam Assignment\b)',
+                        r'(\bIndividual Assignment\b)',
+                        r'(\bAssignment\s+\d+\b)',
+                        r'(\bPresentation\b)',
+                        r'(\bPaper\b)'
+                    ]
+                    
+                    for pattern in title_patterns:
+                        title_match = re.search(pattern, context, re.IGNORECASE)
+                        if title_match:
+                            assessment_title = title_match.group(1)
+                            break
+                    
+                    # If still no specific title found, create one from the assessment type
+                    if not assessment_title:
+                        assessment_title = assessment_type.capitalize()
+                        
+                        # Check for part numbers for projects
+                        if 'project' in assessment_type.lower():
+                            part_match = re.search(r'part\s+(\d+|I|II|III|IV|V|VI)', context, re.IGNORECASE)
+                            if part_match:
+                                assessment_title += f" Part {part_match.group(1)}"
                     elif 'assignment' in context.lower():
                         if 'individual' in context.lower():
                             assessment_title = 'Individual Assignment'
@@ -469,21 +508,46 @@ def extract_sgma_assessments(text):
                 date_obj = extract_date_from_match(date_str)
                 
                 if date_obj:
-                    # Determine the title based on the match
+                    # Get the surrounding context for title extraction
+                    start = max(0, match.start() - 200)
+                    end = min(len(text), match.end() + 200)
+                    context = text[start:end]
+
+                    # Determine the basic assessment type from the match
                     match_text = match.group(0).lower()
+                    assessment_type = "assessment"  # Default type
+                    
                     if 'individual paper' in match_text or 'individual report' in match_text:
-                        title = 'Individual Paper'
+                        assessment_type = 'individual paper'
                     elif 'team paper' in match_text or 'team report' in match_text or 'group paper' in match_text:
-                        title = 'Team Paper'
+                        assessment_type = 'team paper'
                     elif 'midterm' in match_text:
-                        title = 'Midterm Exam'
+                        assessment_type = 'midterm exam'
                     elif 'final exam' in match_text:
-                        title = 'Final Exam'
+                        assessment_type = 'final exam'
                     elif 'case analysis' in match_text or 'case study' in match_text:
-                        title = 'Case Analysis'
+                        assessment_type = 'case analysis'
+                    
+                    # Try to extract a detailed title
+                    detailed_title = extract_detailed_title(context, assessment_type)
+                    
+                    if detailed_title:
+                        title = detailed_title
                     else:
-                        # Generic title
-                        title = 'Assessment'
+                        # Fallback to basic titles if detailed extraction fails
+                        if 'individual paper' in match_text or 'individual report' in match_text:
+                            title = 'Individual Paper'
+                        elif 'team paper' in match_text or 'team report' in match_text or 'group paper' in match_text:
+                            title = 'Team Paper'
+                        elif 'midterm' in match_text:
+                            title = 'Midterm Exam'
+                        elif 'final exam' in match_text:
+                            title = 'Final Exam'
+                        elif 'case analysis' in match_text or 'case study' in match_text:
+                            title = 'Case Analysis'
+                        else:
+                            # Generic title
+                            title = 'Assessment'
                     
                     # Determine time
                     if 'during class' in match_text or 'in class' in match_text:
@@ -619,6 +683,124 @@ def extract_assessment_section(text):
     
     return '\n\n'.join(assessment_content) if assessment_content else ""
 
+def extract_detailed_title(context, assessment_type):
+    """
+    Extract a more detailed title for an assessment based on the surrounding context.
+    
+    Args:
+        context (str): The text surrounding the assessment line
+        assessment_type (str): The basic assessment type (e.g., "quiz", "assignment")
+        
+    Returns:
+        str: A more detailed title if found, None otherwise
+    """
+    # Skip if context is too short
+    if len(context) < 20:
+        return None
+    
+    detailed_title = None
+    
+    # Check for academic-specific assessment patterns first
+    academic_assessment_patterns = [
+        # Group Project with specific naming or numbering
+        (r'(?:group\s+project|team\s+project)\s*(?:#|no\.|number|part)?\s*(\d+|I|II|III|IV|V|VI)?[:\s-]*([^.!?\n]{5,100})', 
+         lambda m: f"Group Project {m.group(1) or ''}: {m.group(2).strip()}" if m.group(2) else f"Group Project {m.group(1) or ''}"),
+        
+        # Super 7 framework pattern (specific to OBHR courses)
+        (r'(?:super\s*7|super\s*seven)(?:\s*framework)?[:\s-]*([^.!?\n]{5,100})', 
+         lambda m: f"Super 7 Framework: {m.group(1).strip()}"),
+        
+        # Individual assignments with numbers/parts
+        (r'(?:individual\s+assignment|individual\s+paper|individual\s+project)\s*(?:#|no\.|number|part)?\s*(\d+|I|II|III|IV|V|VI)?[:\s-]*([^.!?\n]{5,100})', 
+         lambda m: f"Individual Assignment {m.group(1) or ''}: {m.group(2).strip()}" if m.group(2) else f"Individual Assignment {m.group(1) or ''}"),
+        
+        # Course exercises with specific names
+        (r'(?:exercise)[:\s-]*([^\n.!?]{5,100})', 
+         lambda m: f"Exercise: {m.group(1).strip()}"),
+        
+        # Group exercises with numbering
+        (r'(?:group\s+exercises?\s*(?:#|no\.|number|part)?\s*(\d+|I|II|III|IV|V|VI)?)[:\s-]*([^.!?\n]{5,100})', 
+         lambda m: f"Group Exercise {m.group(1) or ''}: {m.group(2).strip()}" if m.group(2) else f"Group Exercise {m.group(1) or ''}"),
+        
+        # Named cases like "Nike Case"
+        (r'([A-Z][a-zA-Z\']+(?:\s+[A-Z][a-zA-Z\']+)?)\s+(?:case|coc)\s+(?:study|write-up|exercise|analysis)', 
+         lambda m: f"Case Study: {m.group(1)}"),
+        
+        # Specific exercise types in OBHR courses
+        (r'(?:job analysis|training design plan|job evaluation|performance appraisal|grievance arbitration|safety audit)\s+exercise', 
+         lambda m: f"{m.group(0).strip().title()}"),
+         
+        # Custom named assignments (capitalized titles)
+        (r'(?:assignment|project|paper|report|presentation)\s*[:\s-]+([A-Z][^.!?\n]{5,100})', 
+         lambda m: f"{assessment_type.capitalize()}: {m.group(1).strip()}")
+    ]
+    
+    # Try each academic assessment pattern
+    for pattern, formatter in academic_assessment_patterns:
+        matches = re.finditer(pattern, context, re.IGNORECASE | re.MULTILINE)
+        for match in matches:
+            try:
+                detailed_title = formatter(match).strip()
+                if detailed_title and len(detailed_title) > 5:
+                    return detailed_title
+            except:
+                continue  # Skip if there's any issue with the formatter
+    
+    # Pattern to match assessment type followed by descriptive text
+    # Examples: "Assignment: Analysis of Financial Markets" or "Team Project - Design a Marketing Plan"
+    descriptive_patterns = [
+        # For assignments, projects, papers with explicit titles
+        r'(?:{})[:\s-]+([A-Z][^.!?]*?(?:\.|\n|$))'.format(assessment_type),
+        # For cases with specific names like "Nike Case Study" or "Case: Southwest Airlines"
+        r'(?:case)[:\s-]*([A-Z][^.!?]*?(?:[\.\n]|$))'.format(assessment_type),
+        # For titled assessments like "Individual Paper: Corporate Ethics"
+        r'(?:{})[:\s-]+([^.!?\n]{{10,60}})'.format(assessment_type),
+        # For assignments with roman numerals or numbers
+        r'(?:{})\s+(?:(?:#|No\.|Number|Part)\s*(\d+|I|II|III|IV|V|VI))'.format(assessment_type),
+        # Look for text in quotes that might be a title
+        r'["\']([^"\']{5,60})["\']'
+    ]
+    
+    # Try each pattern
+    for pattern in descriptive_patterns:
+        matches = re.finditer(pattern, context, re.IGNORECASE | re.MULTILINE)
+        for match in matches:
+            title = match.group(1).strip()
+            # Ensure it's a meaningful title (not too short, not just a date)
+            if len(title) > 5 and not re.match(r'^\d{1,2}/\d{1,2}$', title):
+                # Format the title - capitalize first letter of major words
+                words = title.split()
+                if len(words) > 0:
+                    detailed_title = ' '.join([word.capitalize() if len(word) > 3 or word.lower() not in 
+                                              ['the', 'and', 'of', 'in', 'on', 'at', 'to', 'for', 'with', 'by'] 
+                                              else word.lower() for word in words])
+                    # Add the assessment type if it's not already in the title
+                    if assessment_type not in detailed_title.lower():
+                        assessment_type_capitalized = assessment_type.capitalize()
+                        detailed_title = f"{assessment_type_capitalized}: {detailed_title}"
+                    break
+        if detailed_title:
+            break
+    
+    # Look for specific topic names/keywords for common assessments
+    if not detailed_title:
+        topic_patterns = {
+            "case": r'(?:case).*?(?:on|about|discussing)\s+([A-Z][^.!?\n]{{3,30}})',
+            "project": r'(?:project).*?(?:on|about|focusing\s+on)\s+([A-Z][^.!?\n]{{3,30}})',
+            "paper": r'(?:paper).*?(?:on|about|covering)\s+([A-Z][^.!?\n]{{3,30}})',
+            "presentation": r'(?:presentation).*?(?:on|about)\s+([A-Z][^.!?\n]{{3,30}})'
+        }
+        
+        if assessment_type in topic_patterns:
+            match = re.search(topic_patterns[assessment_type], context, re.IGNORECASE)
+            if match:
+                topic = match.group(1).strip()
+                if len(topic) > 3:
+                    detailed_title = f"{assessment_type.capitalize()}: {topic}"
+    
+    return detailed_title
+
+
 def extract_date_from_match(date_string):
     """
     Extract and format a date string to YYYY-MM-DD format.
@@ -670,10 +852,21 @@ def extract_general_assessments(text):
     # Look for lines with dates, particularly focusing on assessment keywords
     date_lines = text.split('\n')
     
-    for line in date_lines:
+    # Create a window of lines to consider for each assessment (to get more context)
+    window_size = 5
+    lines_with_context = []
+    for i in range(len(date_lines)):
+        start = max(0, i - window_size)
+        end = min(len(date_lines), i + window_size + 1)
+        lines_with_context.append('\n'.join(date_lines[start:end]))
+    
+    for i, line in enumerate(date_lines):
         # Skip empty lines
         if not line.strip():
             continue
+        
+        # Get surrounding context
+        context = lines_with_context[i]
         
         # Check if the line has assessment-related keywords
         if re.search(r'(?:assignment|quiz|exam|midterm|final|project|paper|report|presentation)', line, re.IGNORECASE):
@@ -701,11 +894,18 @@ def extract_general_assessments(text):
                     assessment_type = "Paper"
                 elif 'presentation' in line.lower():
                     assessment_type = "Presentation"
+                elif 'case' in line.lower():
+                    assessment_type = "Case Study"
                 
-                # Extract a number if it's an assignment number
-                number_match = re.search(r'\b' + assessment_type + r'\s+#?(\d+)', line, re.IGNORECASE)
-                if number_match:
-                    assessment_type += " " + number_match.group(1)
+                # Try to find a more detailed title from the context
+                detailed_title = extract_detailed_title(context, assessment_type.lower())
+                if detailed_title:
+                    assessment_type = detailed_title
+                else:
+                    # Extract a number if it's an assignment number
+                    number_match = re.search(r'\b' + assessment_type + r'\s+#?(\d+)', line, re.IGNORECASE)
+                    if number_match:
+                        assessment_type += " " + number_match.group(1)
                 
                 # Extract the date
                 month = date_match.group(1)
