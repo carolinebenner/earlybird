@@ -28,9 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const mainContent = document.querySelector('.main-content');
         document.body.insertBefore(heroSection, mainContent);
         
-        // Get the navbar element
+        // Get the navbar element and navbar logo
         const navbar = document.querySelector('.navbar');
+        const navbarLogo = navbar.querySelector('.navbar-brand img');
         navbar.id = 'mainNav';
+        
+        // Store the original navbar logo size
+        const originalNavLogoHeight = parseInt(window.getComputedStyle(navbarLogo).height);
         
         // Initially make navbar transparent
         navbar.classList.add('top');
@@ -81,6 +85,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Scale logo based on scroll with GPU acceleration
                     const logoScale = Math.max(1 - scrollPercentage * 0.7, 0.3);
                     logoImg.style.transform = `scale(${logoScale}) translateZ(0)`;
+                    
+                    // Increase navbar logo size when scrolled
+                    if (scrollPercentage > 0.7) {
+                        // When hero is almost gone, make navbar logo bigger
+                        const newLogoHeight = originalNavLogoHeight * 1.4; // 40% bigger
+                        navbarLogo.style.height = `${newLogoHeight}px`;
+                        navbarLogo.style.transition = 'height 0.3s ease';
+                    } else {
+                        // Reset to original size when at top
+                        navbarLogo.style.height = `${originalNavLogoHeight}px`;
+                    }
                     
                     // Fade in navbar background after scrolling a bit
                     if (scrollPercentage > 0.1) {
