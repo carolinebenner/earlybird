@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Home - Date Extractor & Calendar Generator{% endblock %}
+{% block title %}Early Bird - Smart Calendar Generation{% endblock %}
 
 {% block styles %}
 <style>
@@ -80,13 +80,13 @@
         opacity: 0.5;
         background-image: radial-gradient(var(--hero-dots-color) 0.5px, transparent 0.5px);
         background-size: 25px 25px;
-    }
+        --microsoft-btn-color: #0078D4; /* Microsoft brand color */
     
     .hero-title {
         font-size: 3.5rem;
         font-weight: 700;
         margin-bottom: 1.5rem;
-        line-height: 1.1;
+        --microsoft-btn-color: #2B88D8; /* Slightly lighter Microsoft color for dark mode */
         background: var(--hero-title-gradient);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -110,16 +110,15 @@
     }
     
     .step-item {
-        transform: translateX(-50px);
-        opacity: 0;
-        transition: all 0.5s ease;
+        opacity: 1;
+        transform: translateX(0) !important;
+        margin-bottom: 0.5rem;
     }
     
     .step-item.active {
-        transform: translateX(0);
         opacity: 1;
+        transform: translateX(0) !important;
     }
-    
     .list-group-item {
         background-color: var(--step-bg) !important;
         color: var(--text-color) !important;
@@ -420,7 +419,7 @@
     <div class="col-lg-7">
         <div class="dropzone rounded-4 shadow-lg p-5 mb-4">
             <div class="dropzone-content text-center">
-                <img src="{{ url_for('static', filename='images/paper-to-calendar.svg') }}" alt="Paper to Calendar Animation" class="img-fluid" style="max-height: 180px;">
+                <!-- Removed image as requested -->
                 <h3 class="mb-3">Drag & Drop Your Syllabus</h3>
                 <p class="text-muted mb-4">Support for PDF, Word documents, and text files</p>
                 <form id="upload-form" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" id="upload-form" class="dropzone-form">
@@ -432,19 +431,10 @@
             </div>
         </div>
         
-        <div class="card border-0 shadow-lg mb-4 form-upload">
-            <div class="card-header border-0 py-2">
-                <h4 class="mb-0 py-2">Upload Document</h4>
-            </div>
-            <div class="card-body p-4">
-                <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
-                    <div class="input-group input-group-lg">
-                        <input class="form-control" type="file" id="file-form" name="file" required>
-                        <button type="submit" class="btn btn-primary px-4">
-                            <i class="bi bi-magic me-2"></i> Extract Dates
-                        </button>
-                    </div>
-                    <div class="form-text mt-2 text-center">Supported formats: .txt, .pdf, .docx, .doc</div>
+                    <button type="button" class="btn{% if theme|default('dark') == 'dark' %} btn-outline-light{% else %} btn-outline-primary{% endif %} btn-lg file-upload-btn px-4 py-2" style="background-color: {% if theme|default('dark') == 'dark' %}rgba(255, 255, 255, 0.1){% else %}rgba(31, 151, 255, 0.1){% endif %};">
+                        <i class="bi bi-file-earmark-text me-2"></i> Browse Files
+                        <input type="file" id="file" name="file" required>
+                    </button>
                 </form>
             </div>
         </div>

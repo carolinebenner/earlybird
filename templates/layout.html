@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Date Extractor & Calendar Generator{% endblock %}</title>
+    <title>{% block title %}Early Bird - Smart Calendar Generation{% endblock %}</title>
     <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -233,8 +233,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
-                <img src="{{ url_for('static', filename='images/early-bird-logo.svg') }}" alt="Early Bird Logo" height="40" class="me-2">
-                <span>Syllabus Extractor</span>
+                <img src="{{ url_for('static', filename='images/early-bird-logo.svg') }}" alt="Early Bird Logo" height="50" class="py-2">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -340,8 +339,9 @@
                 <div class="col-md-6 text-center text-md-start">
                     <span class="text-muted">
                     <span class="text-muted">
-                        <img src="{{ url_for('static', filename='images/early-bird-logo.svg') }}" alt="Early Bird Logo" height="25" class="me-2">
-                        Early Bird &copy; 2025
+                    <span class="text-muted">
+                        <img src="{{ url_for('static', filename='images/early-bird-logo.svg') }}" alt="Early Bird Logo" height="35" class="me-2">
+                        &copy; 2025
                     </span>
                 </div>
                 <div class="col-md-6 text-center text-md-end">

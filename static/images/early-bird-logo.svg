@@ -1,39 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="200px" height="80px" viewBox="0 0 200 80" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<svg width="300px" height="60px" viewBox="0 0 300 60" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <title>Early Bird Logo</title>
   <defs>
     <linearGradient id="birdGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#4361ee;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#7e57c2;stop-opacity:1" />
     </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4361ee;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3949ab;stop-opacity:1" />
+    </linearGradient>
   </defs>
   
   <!-- Text: "Early" -->
-  <text x="10" y="48" font-family="Poppins, sans-serif" font-size="28" font-weight="600" fill="#4361ee">
+  <text x="10" y="42" font-family="Poppins, sans-serif" font-size="42" font-weight="700" fill="url(#textGradient)">
     Early
   </text>
   
-  <!-- Bird Body -->
-  <path d="M125,30 C135,22 145,25 150,35 C155,45 150,55 140,58 C135,60 130,59 125,55 C120,52 118,48 118,42 C118,36 120,32 125,30 Z" 
+  <!-- Bird Body - Moved closer to text -->
+  <path d="M160,15 C172,8 185,12 190,24 C195,36 188,50 175,52 C168,53 160,50 155,45 C150,40 148,33 150,25 C152,17 155,10 160,15 Z" 
         fill="url(#birdGradient)" />
   
   <!-- Bird Eye -->
-  <circle cx="145" cy="35" r="2.5" fill="#ffffff" />
+  <circle cx="183" cy="22" r="3" fill="#ffffff" />
+  <circle cx="182" cy="21" r="1" fill="#000000" />
   
   <!-- Bird Beak -->
-  <path d="M150,43 L165,38 L163,45 L150,43 Z" fill="#ff9800" />
+  <path d="M190,30 L210,25 L208,34 L190,30 Z" fill="#ff9800" />
   
   <!-- Worm in Beak -->
-  <path d="M163,45 C167,44 170,46 171,49 C172,52 170,54 167,55 C164,56 161,54 160,51 C159,48 160,46 163,45 Z" 
+  <path d="M208,34 C214,32 218,36 219,40 C220,44 217,48 213,49 C209,50 205,47 204,43 C203,39 204,35 208,34 Z" 
         fill="#8bc34a" stroke="#6d9c36" stroke-width="0.5" />
-  <path d="M167,55 C169,56 170,58 169,60 C168,62 166,63 164,62 C162,61 161,59 162,57 C163,55 165,54 167,55 Z" 
+  <path d="M213,49 C216,51 217,54 216,57 C215,60 212,62 209,61 C206,60 205,57 206,54 C207,51 210,48 213,49 Z" 
         fill="#8bc34a" stroke="#6d9c36" stroke-width="0.5" />
   
-  <!-- Bird Wing -->
-  <path d="M130,40 C132,35 136,33 140,35 C136,42 132,45 128,42 C128,40 129,38 130,40 Z" 
+  <!-- Bird Wing - Improved shape -->
+  <path d="M165,28 C167,22 173,18 178,21 C172,30 166,34 160,30 C160,27 162,24 165,28 Z" 
         fill="#3949ab" opacity="0.7" />
   
-  <!-- Bird Tail -->
-  <path d="M118,42 C115,37 116,32 120,30 C124,28 130,30 125,35 C120,38 118,40 118,42 Z" 
+  <!-- Bird Tail - Improved shape -->
+  <path d="M150,25 C146,18 148,11 155,8 C162,5 170,8 162,15 C155,19 151,23 150,25 Z" 
         fill="#3949ab" opacity="0.7" />
+        
+  <!-- Bird Feet -->
+  <path d="M160,45 L165,52 M170,45 L175,52" stroke="#ff9800" stroke-width="1.5" />
 </svg>
