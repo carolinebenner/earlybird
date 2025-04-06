@@ -46,6 +46,12 @@
         --upload-icon-hover: var(--light-hover);
         --btn-shadow: 0 10px 25px rgba(31, 151, 255, 0.3);
         --dropzone-hover-border: rgba(31, 151, 255, 0.6);
+        --microsoft-btn-color: #0078d4;
+        --microsoft-btn-hover-color: #0065b3;
+        --microsoft-btn-shadow: rgba(0, 120, 212, 0.4);
+        --microsoft-btn-color: #0078d4;
+        --microsoft-btn-hover-color: #0065b3;
+        --microsoft-btn-shadow: rgba(0, 120, 212, 0.4);
     }
     
     .hero-section {
@@ -294,6 +300,23 @@
     .card-header {
         background-color: var(--nav-bg) !important;
         border-bottom: var(--card-border);
+    /* Microsoft dropdown item */
+    [data-bs-theme="light"] .ms-dropdown-item:hover {
+        background-color: var(--microsoft-btn-color);
+        color: white;
+    }
+    /* Microsoft button styles */
+    .ms-microsoft.btn-outline-primary {
+        color: var(--microsoft-btn-color);
+        border-color: var(--microsoft-btn-color);
+    }
+    
+    .ms-microsoft.btn-outline-primary:hover {
+        background-color: var(--microsoft-btn-color);
+        border-color: var(--microsoft-btn-color);
+        color: white;
+        box-shadow: 0 4px 15px var(--microsoft-btn-shadow);
+    }
     }
 </style>
 {% endblock %}
@@ -312,7 +335,7 @@
                     <a href="{{ url_for('google_auth.login') }}" class="btn btn-primary btn-lg">
                         <i class="bi bi-google me-2"></i> Login with Google
                     </a>
-                    <a href="{{ url_for('microsoft_auth.login') }}" class="btn btn-outline-light btn-lg">
+                    <a href="{{ url_for('microsoft_auth.login') }}" class="btn {% if theme|default('dark') == 'dark' %}btn-outline-light{% else %}btn-outline-primary{% endif %} btn-lg ms-microsoft">
                         <i class="bi bi-microsoft me-2"></i> Login with Microsoft
                     </a>
                     {% endif %}
@@ -451,7 +474,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ url_for('microsoft_auth.login') }}">
+                                    <a class="dropdown-item ms-dropdown-item" href="{{ url_for('microsoft_auth.login') }}">
                                         <i class="bi bi-microsoft me-2"></i> Microsoft Outlook
                                     </a>
                                 </li>
@@ -661,3 +684,7 @@
     });
 </script>
 {% endblock %}
+
+        color: white;
+        box-shadow: 0 4px 15px var(--microsoft-btn-shadow);
+    }
