@@ -4,93 +4,145 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Extract Dates from Documents</h2>
+    <div class="col-lg-10">
+        <div class="card border-0 shadow-lg mb-4">
+            <div class="card-header bg-dark text-white border-0">
+                <h2 class="card-title m-0 py-2">Syllabus Date Extractor</h2>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <div class="row mb-4">
                     {% if not current_user.is_authenticated %}
                     <div class="col-md-8">
-                        <div class="card bg-dark" style="transform: scale(0.75); transform-origin: top left;">
-                            <div class="card-header bg-primary text-light">
-                                <h4 class="mb-0">Login below</h4>
+                        <div class="card bg-dark border-0 shadow mb-4" style="transform: scale(0.85); transform-origin: top left;">
+                            <div class="card-header bg-primary text-white border-0">
+                                <h4 class="mb-0 py-2">Login below</h4>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body p-4">
                                 <div class="row">
-                                    <div class="col-md-6 mb-2 mb-md-0">
-                                        <a href="{{ url_for('google_auth.login') }}" class="btn btn-outline-light d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-google me-2"></i> Login with Google
+                                    <div class="col-md-6 mb-3 mb-md-0">
+                                        <a href="{{ url_for('google_auth.login') }}" class="btn btn-outline-light btn-lg d-flex align-items-center justify-content-center w-100">
+                                            <i class="bi bi-google me-2"></i> Google
                                         </a>
                                     </div>
                                     <div class="col-md-6">
-                                        <a href="{{ url_for('microsoft_auth.login') }}" class="btn btn-outline-light d-flex align-items-center justify-content-center">
-                                            <i class="bi bi-microsoft me-2"></i> Login with Microsoft
+                                        <a href="{{ url_for('microsoft_auth.login') }}" class="btn btn-outline-light btn-lg d-flex align-items-center justify-content-center w-100">
+                                            <i class="bi bi-microsoft me-2"></i> Microsoft
                                         </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="card mt-3">
-                            <div class="card-header bg-secondary text-light">
-                                <h4 class="mb-0">Quick Start Guide</h4>
+                        <div class="card border-0 shadow mt-1">
+                            <div class="card-header bg-dark text-white border-0">
+                                <h4 class="mb-0 py-2">Quick Start Guide</h4>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body p-0">
                                 <ol class="list-group list-group-flush">
-                                    <li class="list-group-item bg-dark">1. Login to your Google or Microsoft Account</li>
-                                    <li class="list-group-item bg-dark">2. Select a file to upload (e.g., a syllabus)</li>
-                                    <li class="list-group-item bg-dark">3. Smart Date Extraction</li>
-                                    <li class="list-group-item bg-dark">4. Preview and select events</li>
-                                    <li class="list-group-item bg-dark">5. Automatically download to your calendar</li>
+                                    <li class="list-group-item bg-dark text-white border-0 py-3">
+                                        <div class="d-flex">
+                                            <span class="display-6 me-3">1</span>
+                                            <div class="lh-sm d-flex align-items-center">Login to your Google or Microsoft Account</div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item bg-dark text-white border-0 py-3">
+                                        <div class="d-flex">
+                                            <span class="display-6 me-3">2</span>
+                                            <div class="lh-sm d-flex align-items-center">Select a file to upload (e.g., a syllabus)</div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item bg-dark text-white border-0 py-3">
+                                        <div class="d-flex">
+                                            <span class="display-6 me-3">3</span>
+                                            <div class="lh-sm d-flex align-items-center">Smart Date Extraction</div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item bg-dark text-white border-0 py-3">
+                                        <div class="d-flex">
+                                            <span class="display-6 me-3">4</span>
+                                            <div class="lh-sm d-flex align-items-center">Preview and select events</div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item bg-dark text-white border-0 py-3">
+                                        <div class="d-flex">
+                                            <span class="display-6 me-3">5</span>
+                                            <div class="lh-sm d-flex align-items-center">Automatically download to your calendar</div>
+                                        </div>
+                                    </li>
                                 </ol>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="dropzone h-100 d-flex flex-column align-items-center justify-content-center p-4 border border-2 border-dashed rounded-3">
-                            <i class="bi bi-cloud-arrow-up fs-1"></i>
-                            <span class="mt-2 fs-5">Drop files here</span>
+                    <div class="col-md-4 d-flex flex-column">
+                        <div class="dropzone h-100 d-flex flex-column align-items-center justify-content-center p-5 bg-dark bg-opacity-90 border-0 rounded-3 shadow">
+                            <i class="bi bi-cloud-arrow-up display-1 text-primary mb-3"></i>
+                            <span class="fs-4 text-white mb-2">Drop files here</span>
+                            <span class="text-muted small">PDF, DOCX, TXT</span>
                         </div>
                     </div>
                     {% else %}
                     <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-header bg-secondary text-light">
-                                <h4 class="mb-0">Quick Start Guide</h4>
+                        <div class="card border-0 shadow">
+                            <div class="card-header bg-dark text-white border-0">
+                                <h4 class="mb-0 py-2">Quick Start Guide</h4>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body p-0">
                                 <ol class="list-group list-group-flush">
-                                    <li class="list-group-item bg-dark">1. Login to your Google or Microsoft Account ✓</li>
-                                    <li class="list-group-item bg-dark">2. Select a file to upload (e.g., a syllabus)</li>
-                                    <li class="list-group-item bg-dark">3. Smart Date Extraction</li>
-                                    <li class="list-group-item bg-dark">4. Preview and select events</li>
-                                    <li class="list-group-item bg-dark">5. Automatically download to your calendar</li>
+                                    <li class="list-group-item bg-dark text-white border-0 py-3">
+                                        <div class="d-flex">
+                                            <span class="display-6 me-3">1</span>
+                                            <div class="lh-sm d-flex align-items-center">Login to your Google or Microsoft Account <i class="bi bi-check-circle-fill text-success ms-2"></i></div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item bg-dark text-white border-0 py-3">
+                                        <div class="d-flex">
+                                            <span class="display-6 me-3">2</span>
+                                            <div class="lh-sm d-flex align-items-center">Select a file to upload (e.g., a syllabus)</div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item bg-dark text-white border-0 py-3">
+                                        <div class="d-flex">
+                                            <span class="display-6 me-3">3</span>
+                                            <div class="lh-sm d-flex align-items-center">Smart Date Extraction</div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item bg-dark text-white border-0 py-3">
+                                        <div class="d-flex">
+                                            <span class="display-6 me-3">4</span>
+                                            <div class="lh-sm d-flex align-items-center">Preview and select events</div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item bg-dark text-white border-0 py-3">
+                                        <div class="d-flex">
+                                            <span class="display-6 me-3">5</span>
+                                            <div class="lh-sm d-flex align-items-center">Automatically download to your calendar</div>
+                                        </div>
+                                    </li>
                                 </ol>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="dropzone h-100 d-flex flex-column align-items-center justify-content-center p-4 border border-2 border-dashed rounded-3">
-                            <i class="bi bi-cloud-arrow-up fs-1"></i>
-                            <span class="mt-2 fs-5">Drop files here</span>
+                    <div class="col-md-4 d-flex flex-column">
+                        <div class="dropzone h-100 d-flex flex-column align-items-center justify-content-center p-5 bg-dark bg-opacity-90 border-0 rounded-3 shadow">
+                            <i class="bi bi-cloud-arrow-up display-1 text-primary mb-3"></i>
+                            <span class="fs-4 text-white mb-2">Drop files here</span>
+                            <span class="text-muted small">PDF, DOCX, TXT</span>
                         </div>
                     </div>
                     {% endif %}
                 </div>
                 
-                <div class="card mb-4">
-                    <div class="card-header bg-secondary text-light">
-                        <h4 class="mb-0">Select Document</h4>
+                <div class="card border-0 shadow mb-4">
+                    <div class="card-header bg-dark text-white border-0">
+                        <h4 class="mb-0 py-2">Select Document</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-4">
                         <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
-                            <div class="input-group">
+                            <div class="input-group input-group-lg">
                                 <input class="form-control" type="file" id="file" name="file" required>
-                                <button type="submit" class="btn btn-primary">Extract</button>
+                                <button type="submit" class="btn btn-primary px-4">Extract</button>
                             </div>
-                            <div class="form-text mt-1">Supported formats: txt, pdf, docx, doc</div>
+                            <div class="form-text mt-2 text-center">Supported formats: .txt, .pdf, .docx, .doc</div>
                         </form>
                     </div>
                 </div>
@@ -98,17 +150,27 @@
         </div>
         
         {% if not current_user.is_authenticated %}
-        <div class="alert alert-info mt-4">
-            <h4 class="alert-heading">Calendar Integration Options</h4>
-            <p>This app supports both Google Calendar and Microsoft Outlook Calendar integration.</p>
-            <hr>
-            <p class="mb-0">You can use this app without logging in, or sign in to automatically add events to your preferred calendar.</p>
-            <div class="row mt-2">
-                <div class="col-md-6">
-                    <a href="{{ url_for('check_google_setup') }}" class="alert-link"><i class="bi bi-google"></i> Google Calendar Setup</a>
+        <div class="alert bg-dark text-white border-0 shadow-lg mt-4">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0 me-3">
+                    <i class="bi bi-calendar-check display-6"></i>
                 </div>
-                <div class="col-md-6">
-                    <a href="{{ url_for('check_microsoft_setup') }}" class="alert-link"><i class="bi bi-microsoft"></i> Microsoft Outlook Setup</a>
+                <div class="flex-grow-1">
+                    <h4 class="alert-heading">Calendar Integration</h4>
+                    <p>This app supports both Google Calendar and Microsoft Outlook Calendar integration for seamless event creation.</p>
+                    <hr class="border-light">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('check_google_setup') }}" class="btn btn-outline-light mb-2 mb-md-0">
+                                <i class="bi bi-google me-2"></i> Google Calendar Setup
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{{ url_for('check_microsoft_setup') }}" class="btn btn-outline-light">
+                                <i class="bi bi-microsoft me-2"></i> Microsoft Outlook Setup
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -144,11 +206,13 @@
             });
             
             function highlight() {
-                dropzone.classList.add('border-primary');
+                dropzone.classList.add('bg-primary');
+                dropzone.classList.remove('bg-dark');
             }
             
             function unhighlight() {
-                dropzone.classList.remove('border-primary');
+                dropzone.classList.remove('bg-primary');
+                dropzone.classList.add('bg-dark');
             }
             
             // Handle dropped files
@@ -160,8 +224,8 @@
                 
                 if (files.length) {
                     fileInput.files = files;
-                    // Optional: Auto-submit the form
-                    // fileInput.form.submit();
+                    // Auto-submit the form after successful drop
+                    fileInput.form.submit();
                 }
             }
         }
