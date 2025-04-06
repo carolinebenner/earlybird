@@ -55,11 +55,11 @@ document.addEventListener('DOMContentLoaded', function() {
         mainContent.classList.add('content-wrapper');
         
         // Add fade-in classes to hero section content
-        const heroTitle = document.querySelector('.hero-title');
+        // Don't animate the hero title - let's keep it visible all times
         const heroSubtitle = document.querySelector('.hero-subtitle');
         const heroButtons = document.querySelector('.hero-content .d-flex');
         
-        if (heroTitle) heroTitle.classList.add('fade-in-delay-1');
+        // No animation for title - keep it visible
         if (heroSubtitle) heroSubtitle.classList.add('fade-in-delay-2');
         if (heroButtons) heroButtons.classList.add('fade-in-delay-3');
         

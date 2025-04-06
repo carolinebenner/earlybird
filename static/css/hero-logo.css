@@ -1,5 +1,21 @@
 /* Hero Logo Animation Styles */
 
+/* Always keep hero title visible */
+.hero-title {
+    opacity: 1 !important;
+    visibility: visible !important;
+    animation: none !important;
+}
+
+/* Hero Logo Animation Styles */
+
+/* Always keep hero title visible */
+.hero-title {
+    opacity: 1 !important;
+    visibility: visible !important;
+    animation: none !important;
+}
+
 /* Full-screen hero section styles */
 #hero-logo-section {
     height: 100vh;
