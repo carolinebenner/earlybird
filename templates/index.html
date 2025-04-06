@@ -348,66 +348,66 @@
 <div class="row">
     <div class="col-lg-5 mb-4 mb-lg-0">
         <div class="card border-0 shadow-lg h-100 floating-card">
-            <div class="card-header border-0">
-                <h4 class="m-0 py-3">How It Works</h4>
+            <div class="card-header border-0 py-2">
+                <h4 class="m-0">How It Works</h4>
             </div>
             <div class="card-body p-0">
                 <div class="steps-container">
                     <div class="list-group list-group-flush step-item" data-step="1">
-                        <div class="list-group-item border-0 p-4">
+                        <div class="list-group-item border-0 p-3">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">1</div>
                                 <div>
-                                    <h5>Upload Your Document</h5>
-                                    <p class="text-muted mb-0">Drag and drop or select your syllabus file</p>
+                                    <h6>Upload Your Document</h6>
+                                    <p class="text-muted mb-0 small">Drag and drop or select your syllabus file</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="list-group list-group-flush step-item" data-step="2">
-                        <div class="list-group-item border-0 p-4">
+                        <div class="list-group-item border-0 p-3">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">2</div>
                                 <div>
-                                    <h5>Smart Date Extraction</h5>
-                                    <p class="text-muted mb-0">Our AI identifies important deadlines and assignments</p>
+                                    <h6>Smart Date Extraction</h6>
+                                    <p class="text-muted mb-0 small">Our AI identifies important deadlines and assignments</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="list-group list-group-flush step-item" data-step="3">
-                        <div class="list-group-item border-0 p-4">
+                        <div class="list-group-item border-0 p-3">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">3</div>
                                 <div>
-                                    <h5>Preview Events</h5>
-                                    <p class="text-muted mb-0">Review extracted dates and make any necessary adjustments</p>
+                                    <h6>Preview Events</h6>
+                                    <p class="text-muted mb-0 small">Review extracted dates and make any necessary adjustments</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="list-group list-group-flush step-item" data-step="4">
-                        <div class="list-group-item border-0 p-4">
+                        <div class="list-group-item border-0 p-3">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">4</div>
                                 <div>
-                                    <h5>Export to Calendar</h5>
-                                    <p class="text-muted mb-0">Send events directly to Google or Microsoft calendar</p>
+                                    <h6>Export to Calendar</h6>
+                                    <p class="text-muted mb-0 small">Send events directly to Google or Microsoft calendar</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="list-group list-group-flush step-item" data-step="5">
-                        <div class="list-group-item border-0 p-4">
+                        <div class="list-group-item border-0 p-3">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">5</div>
                                 <div>
-                                    <h5>Stay Organized</h5>
-                                    <p class="text-muted mb-0">Never miss another deadline with automatic reminders</p>
+                                    <h6>Stay Organized</h6>
+                                    <p class="text-muted mb-0 small">Never miss another deadline with automatic reminders</p>
                                 </div>
                             </div>
                         </div>
@@ -420,10 +420,10 @@
     <div class="col-lg-7">
         <div class="dropzone rounded-4 shadow-lg p-5 mb-4">
             <div class="dropzone-content text-center">
-                <i class="bi bi-cloud-arrow-up upload-icon"></i>
+                <div id="animation-container" class="animation-container mb-4"></div>
                 <h3 class="mb-3">Drag & Drop Your Syllabus</h3>
                 <p class="text-muted mb-4">Support for PDF, Word documents, and text files</p>
-                <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" class="dropzone-form">
+                <form id="upload-form" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" id="upload-form" class="dropzone-form">
                     <button type="button" class="btn btn-primary btn-lg file-upload-btn px-4 py-2">
                         <i class="bi bi-file-earmark-text me-2"></i> Browse Files
                         <input type="file" id="file" name="file" required>
@@ -433,7 +433,7 @@
         </div>
         
         <div class="card border-0 shadow-lg mb-4 form-upload">
-            <div class="card-header border-0">
+            <div class="card-header border-0 py-2">
                 <h4 class="mb-0 py-2">Upload Document</h4>
             </div>
             <div class="card-body p-4">
@@ -460,7 +460,7 @@
                     </div>
                     <div class="col">
                         <h4>Calendar Integration</h4>
-                        <p class="text-muted mb-0">Connect with Google Calendar or Microsoft Outlook for seamless event creation</p>
+                        <p class="text-muted mb-0 small">Connect with Google Calendar or Microsoft Outlook for seamless event creation</p>
                     </div>
                     <div class="col-auto">
                         <div class="dropdown">
@@ -491,198 +491,6 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/particles.min.js') }}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize particles
-        if (document.getElementById('particles-js')) {
-            const particleColor = document.documentElement.getAttribute('data-bs-theme') === 'dark' 
-                ? '#6d5bec' 
-                : '#1f97ff';
-                
-            particlesJS('particles-js', {
-                "particles": {
-                    "number": {
-                        "value": 80,
-                        "density": {
-                            "enable": true,
-                            "value_area": 800
-                        }
-                    },
-                    "color": {
-                        "value": particleColor
-                    },
-                    "shape": {
-                        "type": "circle",
-                        "stroke": {
-                            "width": 0,
-                            "color": "#000000"
-                        },
-                        "polygon": {
-                            "nb_sides": 5
-                        }
-                    },
-                    "opacity": {
-                        "value": 0.5,
-                        "random": false,
-                        "anim": {
-                            "enable": false,
-                            "speed": 1,
-                            "opacity_min": 0.1,
-                            "sync": false
-                        }
-                    },
-                    "size": {
-                        "value": 3,
-                        "random": true,
-                        "anim": {
-                            "enable": false,
-                            "speed": 40,
-                            "size_min": 0.1,
-                            "sync": false
-                        }
-                    },
-                    "line_linked": {
-                        "enable": true,
-                        "distance": 150,
-                        "color": particleColor,
-                        "opacity": 0.4,
-                        "width": 1
-                    },
-                    "move": {
-                        "enable": true,
-                        "speed": 2,
-                        "direction": "none",
-                        "random": false,
-                        "straight": false,
-                        "out_mode": "out",
-                        "bounce": false,
-                        "attract": {
-                            "enable": false,
-                            "rotateX": 600,
-                            "rotateY": 1200
-                        }
-                    }
-                },
-                "interactivity": {
-                    "detect_on": "canvas",
-                    "events": {
-                        "onhover": {
-                            "enable": true,
-                            "mode": "grab"
-                        },
-                        "onclick": {
-                            "enable": true,
-                            "mode": "push"
-                        },
-                        "resize": true
-                    },
-                    "modes": {
-                        "grab": {
-                            "distance": 140,
-                            "line_linked": {
-                                "opacity": 1
-                            }
-                        },
-                        "bubble": {
-                            "distance": 400,
-                            "size": 40,
-                            "duration": 2,
-                            "opacity": 8,
-                            "speed": 3
-                        },
-                        "repulse": {
-                            "distance": 200,
-                            "duration": 0.4
-                        },
-                        "push": {
-                            "particles_nb": 4
-                        },
-                        "remove": {
-                            "particles_nb": 2
-                        }
-                    }
-                },
-                "retina_detect": true
-            });
-        }
-
-        // Initialize step animation
-        const stepItems = document.querySelectorAll('.step-item');
-        
-        function animateSteps() {
-            stepItems.forEach((item, index) => {
-                setTimeout(() => {
-                    item.classList.add('active');
-                }, 300 * (index + 1));
-            });
-        }
-        
-        // Run animations
-        setTimeout(animateSteps, 1000);
-        
-        // Dropzone functionality
-        const dropzone = document.querySelector('.dropzone');
-        const fileInput = document.getElementById('file');
-        const fileForm = document.getElementById('file-form');
-        
-        if (dropzone && fileInput) {
-            // Prevent default behaviors
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropzone.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            // Highlight dropzone when item is dragged over it
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropzone.addEventListener(eventName, highlight, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropzone.addEventListener(eventName, unhighlight, false);
-            });
-            
-            function highlight() {
-                dropzone.style.borderColor = 'var(--bs-primary)';
-                dropzone.style.backgroundColor = 'rgba(var(--bs-primary-rgb), 0.1)';
-            }
-            
-            function unhighlight() {
-                dropzone.style.borderColor = '';
-                dropzone.style.backgroundColor = '';
-            }
-            
-            // Handle dropped files
-            dropzone.addEventListener('drop', handleDrop, false);
-            
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                
-                if (files.length) {
-                    fileInput.files = files;
-                    if (fileForm) {
-                        fileForm.files = files;
-                    }
-                    
-                    // Auto-submit the form
-                    fileInput.form.submit();
-                }
-            }
-            
-            // Make the browse button work with the dropzone
-            fileInput.addEventListener('change', function() {
-                if (fileForm) {
-                    fileForm.files = this.files;
-                }
-                this.form.submit();
-            });
-        }
-    });
-</script>
 {% endblock %}
 
         color: white;
