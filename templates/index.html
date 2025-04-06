@@ -97,46 +97,6 @@
             </div>
         </div>
         
-        <div class="card mt-4">
-            <div class="card-header">
-                <h3 class="card-title">How It Works</h3>
-            </div>
-            <div class="card-body">
-                <ol class="list-group list-group-numbered">
-                    <li class="list-group-item d-flex align-items-start">
-                        <div>
-                            <strong><i class="bi bi-upload"></i> Upload a Document</strong>
-                            <p class="mb-0">Upload any syllabus, course outline, or assignment document (PDF, Word, or text).</p>
-                        </div>
-                    </li>
-                    <li class="list-group-item d-flex align-items-start">
-                        <div>
-                            <strong><i class="bi bi-search"></i> Smart Date Extraction</strong>
-                            <p class="mb-0">The system automatically scans for assignment due dates, exam dates, and other academic deadlines.</p>
-                        </div>
-                    </li>
-                    <li class="list-group-item d-flex align-items-start">
-                        <div>
-                            <strong><i class="bi bi-pencil-square"></i> Review & Edit</strong>
-                            <p class="mb-0">Check the extracted dates, edit titles, and set specific times for your events before generating the calendar files.</p>
-                        </div>
-                    </li>
-                    <li class="list-group-item d-flex align-items-start">
-                        <div>
-                            <strong><i class="bi bi-download"></i> Download Calendar Files</strong>
-                            <p class="mb-0">Get your .ics files, which are compatible with all major calendar applications including Google Calendar, Apple Calendar, and Outlook.</p>
-                        </div>
-                    </li>
-                    <li class="list-group-item d-flex align-items-start">
-                        <div>
-                            <strong><i class="bi bi-calendar-check"></i> Import or Automatically Add</strong>
-                            <p class="mb-0">Import the .ics files into your preferred calendar, or sign in with Google or Microsoft to add events directly to your calendar.</p>
-                        </div>
-                    </li>
-                </ol>
-            </div>
-        </div>
-        
         {% if not current_user.is_authenticated %}
         <div class="alert alert-info mt-4">
             <h4 class="alert-heading">Calendar Integration Options</h4>
