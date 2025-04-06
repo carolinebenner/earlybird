@@ -4,13 +4,58 @@
 
 {% block styles %}
 <style>
+    /* Dark mode specific styles */
+    [data-bs-theme="dark"] {
+        --hero-bg-gradient: linear-gradient(125deg, #14122b 0%, #1e1b42 100%);
+        --hero-title-gradient: linear-gradient(90deg, #f0f0f0, #c0abff);
+        --hero-dots-color: rgba(142, 110, 255, 0.5);
+        --card-bg: var(--dark-card-bg);
+        --step-bg: var(--dark-card-bg);
+        --text-color: var(--dark-text);
+        --text-muted: var(--dark-text-secondary);
+        --scrollbar-track: #1a1a2e;
+        --scrollbar-thumb: var(--dark-primary);
+        --step-circle-bg: rgba(109, 91, 236, 0.2);
+        --step-circle-hover: rgba(109, 91, 236, 0.5);
+        --dropzone-border: 2px dashed rgba(142, 110, 255, 0.3);
+        --dropzone-bg: rgba(30, 28, 50, 0.5);
+        --dropzone-hover-shadow: 0 20px 40px rgba(77, 62, 230, 0.3);
+        --upload-icon-color: var(--dark-primary);
+        --upload-icon-hover: var(--dark-hover);
+        --btn-shadow: 0 10px 25px rgba(109, 91, 236, 0.4);
+        --dropzone-hover-border: rgba(142, 110, 255, 0.6);
+    }
+    
+    /* Light mode specific styles */
+    [data-bs-theme="light"] {
+        --hero-bg-gradient: linear-gradient(125deg, #f0f9ff 0%, #e0f1ff 100%);
+        --hero-title-gradient: linear-gradient(90deg, #1a73e8, #0076e4);
+        --hero-dots-color: rgba(31, 151, 255, 0.3);
+        --card-bg: var(--light-card-bg);
+        --step-bg: var(--light-card-bg);
+        --text-color: var(--light-text);
+        --text-muted: var(--light-text-secondary);
+        --scrollbar-track: #e0f1ff;
+        --scrollbar-thumb: var(--light-primary);
+        --step-circle-bg: rgba(31, 151, 255, 0.15);
+        --step-circle-hover: rgba(31, 151, 255, 0.3);
+        --dropzone-border: 2px dashed rgba(31, 151, 255, 0.3);
+        --dropzone-bg: rgba(240, 249, 255, 0.7);
+        --dropzone-hover-shadow: 0 20px 40px rgba(0, 118, 228, 0.2);
+        --upload-icon-color: var(--light-primary);
+        --upload-icon-hover: var(--light-hover);
+        --btn-shadow: 0 10px 25px rgba(31, 151, 255, 0.3);
+        --dropzone-hover-border: rgba(31, 151, 255, 0.6);
+    }
+    
     .hero-section {
         position: relative;
         min-height: 60vh;
         overflow: hidden;
-        background: linear-gradient(125deg, #0f0f0f 0%, #1d1d1d 100%);
+        background: var(--hero-bg-gradient);
         border-radius: 1rem;
         margin-bottom: 3rem;
+        box-shadow: 0 15px 30px var(--shadow-color);
     }
     
     .hero-content {
@@ -27,7 +72,7 @@
         height: 100%;
         z-index: 1;
         opacity: 0.5;
-        background-image: radial-gradient(#3b82f6 0.5px, transparent 0.5px);
+        background-image: radial-gradient(var(--hero-dots-color) 0.5px, transparent 0.5px);
         background-size: 25px 25px;
     }
     
@@ -36,7 +81,7 @@
         font-weight: 700;
         margin-bottom: 1.5rem;
         line-height: 1.1;
-        background: linear-gradient(90deg, #f0f0f0, #7fb9ff);
+        background: var(--hero-title-gradient);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         animation: titleFade 1.5s ease-in-out;
@@ -47,6 +92,7 @@
         font-weight: 300;
         margin-bottom: 2rem;
         opacity: 0;
+        color: var(--text-color);
         animation: subtitleFade 1.5s ease-in-out 0.5s forwards;
     }
     
@@ -54,6 +100,7 @@
         transform: translateY(50px);
         opacity: 0;
         animation: floatUp 1s ease-out 1s forwards;
+        background-color: var(--card-bg) !important;
     }
     
     .step-item {
@@ -67,12 +114,21 @@
         opacity: 1;
     }
     
+    .list-group-item {
+        background-color: var(--step-bg) !important;
+        color: var(--text-color) !important;
+    }
+    
+    .text-muted {
+        color: var(--text-muted) !important;
+    }
+    
     .dropzone {
         position: relative;
         transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         cursor: pointer;
-        border: 2px dashed rgba(255, 255, 255, 0.2);
-        background: rgba(30, 30, 30, 0.5);
+        border: var(--dropzone-border);
+        background: var(--dropzone-bg);
         backdrop-filter: blur(10px);
         overflow: hidden;
     }
@@ -84,7 +140,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+        background: linear-gradient(45deg, var(--bs-primary), var(--accent-color));
         opacity: 0;
         transition: opacity 0.4s ease;
         z-index: 0;
@@ -92,8 +148,8 @@
     
     .dropzone:hover {
         transform: scale(1.05) translateY(-5px);
-        border-color: rgba(255, 255, 255, 0.5);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        border-color: var(--dropzone-hover-border);
+        box-shadow: var(--dropzone-hover-shadow);
     }
     
     .dropzone:hover::before {
@@ -108,13 +164,13 @@
     .upload-icon {
         font-size: 5rem;
         margin-bottom: 1rem;
-        color: #3b82f6;
+        color: var(--upload-icon-color);
         transition: all 0.4s ease;
     }
     
     .dropzone:hover .upload-icon {
         transform: translateY(-10px);
-        color: #60a5fa;
+        color: var(--upload-icon-hover);
     }
     
     .file-upload-btn {
@@ -125,7 +181,7 @@
     
     .file-upload-btn:hover {
         transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        box-shadow: var(--btn-shadow);
     }
     
     .file-upload-btn input[type="file"] {
@@ -196,7 +252,7 @@
         max-height: 400px;
         overflow-y: auto;
         scrollbar-width: thin;
-        scrollbar-color: #3b82f6 #1a1a1a;
+        scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
     }
     
     .steps-container::-webkit-scrollbar {
@@ -204,12 +260,12 @@
     }
     
     .steps-container::-webkit-scrollbar-track {
-        background: #1a1a1a;
+        background: var(--scrollbar-track);
         border-radius: 10px;
     }
     
     .steps-container::-webkit-scrollbar-thumb {
-        background: #3b82f6;
+        background: var(--scrollbar-thumb);
         border-radius: 10px;
     }
     
@@ -218,7 +274,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: rgba(59, 130, 246, 0.2);
+        background: var(--step-circle-bg);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -226,11 +282,18 @@
         font-size: 1.5rem;
         margin-right: 1rem;
         transition: all 0.4s ease;
+        color: var(--bs-primary);
     }
     
     .step-item:hover .step-circle {
-        background: rgba(59, 130, 246, 0.5);
+        background: var(--step-circle-hover);
         transform: scale(1.1);
+    }
+    
+    /* Card header */
+    .card-header {
+        background-color: var(--nav-bg) !important;
+        border-bottom: var(--card-border);
     }
 </style>
 {% endblock %}
@@ -262,13 +325,13 @@
 <div class="row">
     <div class="col-lg-5 mb-4 mb-lg-0">
         <div class="card border-0 shadow-lg h-100 floating-card">
-            <div class="card-header bg-dark border-0">
-                <h4 class="text-white m-0 py-3">How It Works</h4>
+            <div class="card-header border-0">
+                <h4 class="m-0 py-3">How It Works</h4>
             </div>
             <div class="card-body p-0">
                 <div class="steps-container">
                     <div class="list-group list-group-flush step-item" data-step="1">
-                        <div class="list-group-item bg-dark text-white border-0 p-4">
+                        <div class="list-group-item border-0 p-4">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">1</div>
                                 <div>
@@ -280,7 +343,7 @@
                     </div>
                     
                     <div class="list-group list-group-flush step-item" data-step="2">
-                        <div class="list-group-item bg-dark text-white border-0 p-4">
+                        <div class="list-group-item border-0 p-4">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">2</div>
                                 <div>
@@ -292,7 +355,7 @@
                     </div>
                     
                     <div class="list-group list-group-flush step-item" data-step="3">
-                        <div class="list-group-item bg-dark text-white border-0 p-4">
+                        <div class="list-group-item border-0 p-4">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">3</div>
                                 <div>
@@ -304,7 +367,7 @@
                     </div>
                     
                     <div class="list-group list-group-flush step-item" data-step="4">
-                        <div class="list-group-item bg-dark text-white border-0 p-4">
+                        <div class="list-group-item border-0 p-4">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">4</div>
                                 <div>
@@ -316,7 +379,7 @@
                     </div>
                     
                     <div class="list-group list-group-flush step-item" data-step="5">
-                        <div class="list-group-item bg-dark text-white border-0 p-4">
+                        <div class="list-group-item border-0 p-4">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">5</div>
                                 <div>
@@ -335,7 +398,7 @@
         <div class="dropzone rounded-4 shadow-lg p-5 mb-4">
             <div class="dropzone-content text-center">
                 <i class="bi bi-cloud-arrow-up upload-icon"></i>
-                <h3 class="text-white mb-3">Drag & Drop Your Syllabus</h3>
+                <h3 class="mb-3">Drag & Drop Your Syllabus</h3>
                 <p class="text-muted mb-4">Support for PDF, Word documents, and text files</p>
                 <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" class="dropzone-form">
                     <button type="button" class="btn btn-primary btn-lg file-upload-btn px-4 py-2">
@@ -347,7 +410,7 @@
         </div>
         
         <div class="card border-0 shadow-lg mb-4 form-upload">
-            <div class="card-header bg-dark text-white border-0">
+            <div class="card-header border-0">
                 <h4 class="mb-0 py-2">Upload Document</h4>
             </div>
             <div class="card-body p-4">
@@ -404,10 +467,140 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/particles.min.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize particles
+        if (document.getElementById('particles-js')) {
+            const particleColor = document.documentElement.getAttribute('data-bs-theme') === 'dark' 
+                ? '#6d5bec' 
+                : '#1f97ff';
+                
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": particleColor
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.5,
+                        "random": false,
+                        "anim": {
+                            "enable": false,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 40,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": particleColor,
+                        "opacity": 0.4,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+        }
+
+        // Initialize step animation
+        const stepItems = document.querySelectorAll('.step-item');
+        
+        function animateSteps() {
+            stepItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.add('active');
+                }, 300 * (index + 1));
+            });
+        }
+        
+        // Run animations
+        setTimeout(animateSteps, 1000);
+        
+        // Dropzone functionality
         const dropzone = document.querySelector('.dropzone');
         const fileInput = document.getElementById('file');
+        const fileForm = document.getElementById('file-form');
         
         if (dropzone && fileInput) {
             // Prevent default behaviors
@@ -430,13 +623,13 @@
             });
             
             function highlight() {
-                dropzone.classList.add('bg-primary');
-                dropzone.classList.remove('bg-dark');
+                dropzone.style.borderColor = 'var(--bs-primary)';
+                dropzone.style.backgroundColor = 'rgba(var(--bs-primary-rgb), 0.1)';
             }
             
             function unhighlight() {
-                dropzone.classList.remove('bg-primary');
-                dropzone.classList.add('bg-dark');
+                dropzone.style.borderColor = '';
+                dropzone.style.backgroundColor = '';
             }
             
             // Handle dropped files
@@ -448,10 +641,22 @@
                 
                 if (files.length) {
                     fileInput.files = files;
-                    // Auto-submit the form after successful drop
+                    if (fileForm) {
+                        fileForm.files = files;
+                    }
+                    
+                    // Auto-submit the form
                     fileInput.form.submit();
                 }
             }
+            
+            // Make the browse button work with the dropzone
+            fileInput.addEventListener('change', function() {
+                if (fileForm) {
+                    fileForm.files = this.files;
+                }
+                this.form.submit();
+            });
         }
     });
 </script>

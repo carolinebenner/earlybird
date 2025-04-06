@@ -6,72 +6,222 @@
     <title>{% block title %}Date Extractor & Calendar Generator{% endblock %}</title>
     <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            /* Dark mode theme */
+            --dark-bg: #121212;
+            --dark-card-bg: #1e1e2f;
+            --dark-nav-bg: #191927;
+            --dark-primary: #6d5bec;
+            --dark-secondary: #8f6afd;
+            --dark-accent: #4e3ee6;
+            --dark-hover: #7867f0;
+            --dark-text: #f8f9fa;
+            --dark-text-secondary: #b4b7bc;
+            --dark-shadow: rgba(80, 63, 205, 0.2);
+            
+            /* Light mode theme */
+            --light-bg: #ffffff;
+            --light-card-bg: #f8f9fa;
+            --light-nav-bg: #ffffff;
+            --light-primary: #1f97ff;
+            --light-secondary: #3db5ff;
+            --light-accent: #0076e4;
+            --light-hover: #46a6ff;
+            --light-text: #212529;
+            --light-text-secondary: #6c757d;
+            --light-shadow: rgba(0, 118, 228, 0.15);
+        }
+        
+        [data-bs-theme="dark"] {
+            --bs-body-bg: var(--dark-bg);
+            --bs-body-color: var(--dark-text);
+            --bs-primary: var(--dark-primary);
+            --bs-primary-rgb: 109, 91, 236;
+            --bs-card-bg: var(--dark-card-bg);
+            --bs-body-font-family: 'Poppins', sans-serif;
+            --shadow-color: var(--dark-shadow);
+            --accent-color: var(--dark-accent);
+            --hover-color: var(--dark-hover);
+            --nav-bg: var(--dark-nav-bg);
+            --card-border: 1px solid #2d2d42;
+            --secondary-text: var(--dark-text-secondary);
+        }
+        
+        [data-bs-theme="light"] {
+            --bs-body-bg: var(--light-bg);
+            --bs-body-color: var(--light-text);
+            --bs-primary: var(--light-primary);
+            --bs-primary-rgb: 31, 151, 255;
+            --bs-card-bg: var(--light-card-bg);
+            --bs-body-font-family: 'Poppins', sans-serif;
+            --shadow-color: var(--light-shadow);
+            --accent-color: var(--light-accent);
+            --hover-color: var(--light-hover);
+            --nav-bg: var(--light-nav-bg);
+            --card-border: 1px solid #eaeaea;
+            --secondary-text: var(--light-text-secondary);
+        }
+        
         body {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background-color: #1a1a1a;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+        
         .navbar {
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-            background-color: #0d0d0d !important;
+            box-shadow: 0 2px 15px var(--shadow-color);
+            background-color: var(--nav-bg) !important;
+            border-bottom: var(--card-border);
+            padding: 0.8rem 0;
         }
+        
         .navbar-brand {
             font-weight: 700;
             letter-spacing: 0.5px;
+            color: var(--bs-primary) !important;
         }
+        
         .main-content {
             flex: 1;
         }
+        
         .footer {
             margin-top: auto;
-            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.3);
-            background-color: #0d0d0d !important;
+            box-shadow: 0 -2px 15px var(--shadow-color);
+            background-color: var(--nav-bg) !important;
+            border-top: var(--card-border);
+            padding: 1rem 0;
         }
+        
         .card {
             overflow: hidden;
             transition: all 0.3s ease;
+            border-radius: 12px;
+            border: var(--card-border);
+            background-color: var(--bs-card-bg);
+            box-shadow: 0 4px 15px var(--shadow-color);
         }
+        
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important;
+            box-shadow: 0 10px 25px var(--shadow-color) !important;
         }
+        
         .btn {
-            border-radius: 5px;
+            border-radius: 10px;
             font-weight: 500;
             letter-spacing: 0.3px;
             text-transform: uppercase;
             font-size: 0.9rem;
-            padding: 0.5rem 1.5rem;
+            padding: 0.6rem 1.8rem;
             transition: all 0.3s ease;
         }
+        
         .btn-primary {
-            background: linear-gradient(135deg, #0d6efd, #0a54c2);
+            background: linear-gradient(135deg, var(--bs-primary), var(--accent-color));
             border: none;
         }
+        
         .btn-primary:hover {
-            background: linear-gradient(135deg, #0a58ca, #084298);
+            background: linear-gradient(135deg, var(--hover-color), var(--bs-primary));
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+            box-shadow: 0 5px 15px var(--shadow-color);
         }
+        
         .btn-outline-light:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px var(--shadow-color);
         }
+        
+        .nav-link {
+            color: var(--bs-body-color) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: var(--bs-primary) !important;
+            background-color: rgba(var(--bs-primary-rgb), 0.1);
+        }
+        
+        .dropdown-menu {
+            border-radius: 10px;
+            border: var(--card-border);
+            overflow: hidden;
+            box-shadow: 0 5px 20px var(--shadow-color);
+        }
+        
+        .dropdown-item {
+            padding: 0.6rem 1.2rem;
+            transition: all 0.2s ease;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(var(--bs-primary-rgb), 0.1);
+            color: var(--bs-primary);
+        }
+        
         .dropzone {
             transition: all 0.3s ease;
             cursor: pointer;
+            border: 2px dashed rgba(var(--bs-primary-rgb), 0.5);
+            border-radius: 12px;
+            background-color: rgba(var(--bs-primary-rgb), 0.05);
         }
+        
         .dropzone:hover {
             transform: scale(1.02);
+            border-color: var(--bs-primary);
+            background-color: rgba(var(--bs-primary-rgb), 0.08);
         }
+        
         .display-6 {
             font-size: 2.5rem;
-            font-weight: 300;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--bs-primary), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+        
         .shadow-lg {
-            box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.4) !important;
+            box-shadow: 0 1rem 3rem var(--shadow-color) !important;
+        }
+        
+        .badge-primary {
+            background-color: var(--bs-primary);
+            color: white;
+            padding: 0.35em 0.65em;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        
+        /* Animation effects */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        /* Theme switch icon animation */
+        .theme-icon {
+            transition: transform 0.5s ease;
+        }
+        
+        .theme-icon:hover {
+            transform: rotate(180deg);
         }
     </style>
     {% block styles %}{% endblock %}

@@ -4,50 +4,13 @@
 
 {% block styles %}
 <style>
-    /* Dark mode specific styles */
-    [data-bs-theme="dark"] {
-        --hero-bg-gradient: linear-gradient(125deg, #14122b 0%, #1e1b42 100%);
-        --hero-title-gradient: linear-gradient(90deg, #f0f0f0, #c0abff);
-        --hero-dots-color: rgba(142, 110, 255, 0.5);
-        --feature-card-bg: rgba(30, 30, 47, 0.7);
-        --feature-card-border: 1px solid rgba(142, 110, 255, 0.1);
-        --feature-card-hover-border: rgba(109, 91, 236, 0.3);
-        --feature-icon-bg: rgba(109, 91, 236, 0.1);
-        --feature-icon-color: var(--dark-primary);
-        --feature-icon-hover-bg: rgba(109, 91, 236, 0.2);
-        --cta-gradient: linear-gradient(135deg, #6d5bec, #4e3ee6);
-        --cta-shadow: rgba(77, 62, 230, 0.5);
-        --privacy-card-bg: linear-gradient(135deg, rgba(30, 30, 47, 0.8), rgba(24, 23, 35, 0.8));
-        --privacy-card-border: 1px solid rgba(142, 110, 255, 0.1);
-        --privacy-icon-color: var(--dark-primary);
-    }
-    
-    /* Light mode specific styles */
-    [data-bs-theme="light"] {
-        --hero-bg-gradient: linear-gradient(125deg, #f0f9ff 0%, #e0f1ff 100%);
-        --hero-title-gradient: linear-gradient(90deg, #1a73e8, #0076e4);
-        --hero-dots-color: rgba(31, 151, 255, 0.3);
-        --feature-card-bg: rgba(250, 252, 255, 0.9);
-        --feature-card-border: 1px solid rgba(31, 151, 255, 0.1);
-        --feature-card-hover-border: rgba(31, 151, 255, 0.3);
-        --feature-icon-bg: rgba(31, 151, 255, 0.1);
-        --feature-icon-color: var(--light-primary);
-        --feature-icon-hover-bg: rgba(31, 151, 255, 0.2);
-        --cta-gradient: linear-gradient(135deg, #1f97ff, #0076e4);
-        --cta-shadow: rgba(0, 118, 228, 0.5);
-        --privacy-card-bg: linear-gradient(135deg, rgba(240, 249, 255, 0.9), rgba(230, 246, 255, 0.9));
-        --privacy-card-border: 1px solid rgba(31, 151, 255, 0.1);
-        --privacy-icon-color: var(--light-primary);
-    }
-    
     .hero-about {
         position: relative;
-        background: var(--hero-bg-gradient);
+        background: linear-gradient(125deg, #0f0f0f 0%, #1d1d1d 100%);
         border-radius: 1rem;
         overflow: hidden;
         padding: 3rem 0;
         margin-bottom: 3rem;
-        box-shadow: 0 15px 30px var(--shadow-color);
     }
     
     .hero-about::before {
@@ -57,7 +20,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: radial-gradient(var(--hero-dots-color) 0.5px, transparent 0.5px);
+        background-image: radial-gradient(#3b82f6 0.5px, transparent 0.5px);
         background-size: 25px 25px;
         opacity: 0.3;
         z-index: 0;
@@ -72,7 +35,7 @@
         font-size: 3rem;
         font-weight: 700;
         margin-bottom: 1.5rem;
-        background: var(--hero-title-gradient);
+        background: linear-gradient(90deg, #f0f0f0, #7fb9ff);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
@@ -82,32 +45,30 @@
         font-weight: 300;
         margin-bottom: 2rem;
         opacity: 0.8;
-        color: var(--text-color);
     }
     
     .feature-card {
         transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
-        background: var(--feature-card-bg);
+        background: rgba(20, 20, 20, 0.7);
         backdrop-filter: blur(10px);
         border-radius: 1rem;
-        border: var(--feature-card-border);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         overflow: hidden;
         height: 100%;
-        box-shadow: 0 8px 20px var(--shadow-color);
     }
     
     .feature-card:hover {
         transform: translateY(-10px) scale(1.02);
-        box-shadow: 0 20px 40px var(--shadow-color);
-        border-color: var(--feature-card-hover-border);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        border-color: rgba(59, 130, 246, 0.3);
     }
     
     .feature-icon {
         font-size: 2.5rem;
         margin-bottom: 1.5rem;
         display: inline-block;
-        color: var(--feature-icon-color);
-        background: var(--feature-icon-bg);
+        color: #3b82f6;
+        background: rgba(59, 130, 246, 0.1);
         width: 80px;
         height: 80px;
         line-height: 80px;
@@ -118,26 +79,24 @@
     
     .feature-card:hover .feature-icon {
         transform: scale(1.1) rotate(10deg);
-        background: var(--feature-icon-hover-bg);
+        background: rgba(59, 130, 246, 0.2);
     }
     
     .feature-title {
         font-size: 1.5rem;
         font-weight: 700;
         margin-bottom: 1rem;
-        color: var(--text-color);
     }
     
     .privacy-card {
-        background: var(--privacy-card-bg);
+        background: linear-gradient(135deg, rgba(30, 30, 30, 0.8), rgba(20, 20, 20, 0.8));
         border-radius: 1rem;
-        border: var(--privacy-card-border);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 2rem;
         margin-top: 3rem;
         transform: translateY(30px);
         opacity: 0;
         animation: fadeUp 1s ease 0.5s forwards;
-        box-shadow: 0 10px 30px var(--shadow-color);
     }
     
     @keyframes fadeUp {
@@ -156,7 +115,7 @@
         text-transform: uppercase;
         letter-spacing: 1px;
         overflow: hidden;
-        background: var(--cta-gradient);
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
         border-radius: 0.5rem;
         border: none;
         transition: all 0.4s ease;
@@ -175,7 +134,7 @@
     
     .cta-button:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 30px var(--cta-shadow);
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.5);
     }
     
     .cta-button:hover::before {
@@ -261,7 +220,7 @@
     <div class="privacy-card">
         <div class="row align-items-center">
             <div class="col-md-2 text-center mb-4 mb-md-0">
-                <i class="bi bi-shield-check" style="font-size: 4rem; color: var(--privacy-icon-color);"></i>
+                <i class="bi bi-shield-check" style="font-size: 4rem; color: #3b82f6;"></i>
             </div>
             <div class="col-md-10">
                 <h3 class="mb-3">Privacy & Security</h3>
