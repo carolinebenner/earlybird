@@ -1,191 +1,103 @@
 {% extends "layout.html" %}
 
-{% block title %}Early Bird - Smart Calendar Generation{% endblock %}
+{% block title %}Early Bird - Transform Your Syllabus Into Calendar Events{% endblock %}
 
 {% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/hero-logo.css') }}">
 <style>
-    /* Dark mode specific styles */
-    [data-bs-theme="dark"] {
-        --hero-bg-gradient: linear-gradient(125deg, #14122b 0%, #1e1b42 100%);
-        --hero-title-gradient: linear-gradient(90deg, #f0f0f0, #c0abff);
-        --hero-dots-color: rgba(142, 110, 255, 0.5);
-        --card-bg: var(--dark-card-bg);
-        --step-bg: var(--dark-card-bg);
-        --text-color: var(--dark-text);
-        --text-muted: var(--dark-text-secondary);
-        --scrollbar-track: #1a1a2e;
-        --scrollbar-thumb: var(--dark-primary);
-        --step-circle-bg: rgba(109, 91, 236, 0.2);
-        --step-circle-hover: rgba(109, 91, 236, 0.5);
-        --dropzone-border: 2px dashed rgba(142, 110, 255, 0.3);
-        --dropzone-bg: rgba(30, 28, 50, 0.5);
-        --dropzone-hover-shadow: 0 20px 40px rgba(77, 62, 230, 0.3);
-        --upload-icon-color: var(--dark-primary);
-        --upload-icon-hover: var(--dark-hover);
-        --btn-shadow: 0 10px 25px rgba(109, 91, 236, 0.4);
-        --dropzone-hover-border: rgba(142, 110, 255, 0.6);
-    }
-    
-    /* Light mode specific styles */
-    [data-bs-theme="light"] {
-        --hero-bg-gradient: linear-gradient(125deg, #f0f9ff 0%, #e0f1ff 100%);
-        --hero-title-gradient: linear-gradient(90deg, #1a73e8, #0076e4);
-        --hero-dots-color: rgba(31, 151, 255, 0.3);
-        --card-bg: var(--light-card-bg);
-        --step-bg: var(--light-card-bg);
-        --text-color: var(--light-text);
-        --text-muted: var(--light-text-secondary);
-        --scrollbar-track: #e0f1ff;
-        --scrollbar-thumb: var(--light-primary);
-        --step-circle-bg: rgba(31, 151, 255, 0.15);
-        --step-circle-hover: rgba(31, 151, 255, 0.3);
-        --dropzone-border: 2px dashed rgba(31, 151, 255, 0.3);
-        --dropzone-bg: rgba(240, 249, 255, 0.7);
-        --dropzone-hover-shadow: 0 20px 40px rgba(0, 118, 228, 0.2);
-        --upload-icon-color: var(--light-primary);
-        --upload-icon-hover: var(--light-hover);
-        --btn-shadow: 0 10px 25px rgba(31, 151, 255, 0.3);
-        --dropzone-hover-border: rgba(31, 151, 255, 0.6);
-        --microsoft-btn-color: #0078d4;
-        --microsoft-btn-hover-color: #0065b3;
-        --microsoft-btn-shadow: rgba(0, 120, 212, 0.4);
-        --microsoft-btn-color: #0078d4;
-        --microsoft-btn-hover-color: #0065b3;
-        --microsoft-btn-shadow: rgba(0, 120, 212, 0.4);
-    }
-    
+    /* Custom styles for the hero section */
     .hero-section {
-        position: relative;
-        min-height: 30vh; /* Reduced from 60vh */
+        height: 30vh;
         overflow: hidden;
-        background: var(--hero-bg-gradient);
-        border-radius: 1rem;
-        margin-bottom: 1rem; /* Reduced from 3rem */
-        box-shadow: 0 15px 30px var(--shadow-color);
+        position: relative;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-section {
+            height: auto;
+            padding: 40px 0;
+        }
     }
     
     .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
         position: relative;
-        z-index: 2;
-        padding: 2rem 0; /* Reduced from 4rem */
-    }
-    
-    .hero-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        opacity: 0.5;
-        background-image: radial-gradient(var(--hero-dots-color) 0.5px, transparent 0.5px);
-        background-size: 25px 25px;
+        z-index: 3;
+        padding: 30px;
     }
     
     .hero-title {
-        font-size: 2.8rem;
-        font-weight: 700;
-        margin-bottom: 1.5rem;
-        background: var(--hero-title-gradient);
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, var(--bs-primary), var(--bs-secondary));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        animation: titleFade 1.5s ease-in-out;
+        transition: all 0.4s ease;
     }
     
     .hero-subtitle {
         font-size: 1.2rem;
-        font-weight: 300;
-        margin-bottom: 1rem;
-        opacity: 0;
-        color: var(--text-color);
-        animation: subtitleFade 1.5s ease-in-out 0.5s forwards;
+        max-width: 600px;
+        margin: 0 auto 1.5rem;
     }
     
-    .floating-card {
-        transform: translateY(50px);
-        opacity: 0;
-        animation: floatUp 1s ease-out 1s forwards;
-        background-color: var(--card-bg) !important;
-    }
-    
-    .step-item {
-        opacity: 1;
-        transform: translateX(0) !important;
-        margin-bottom: 0.5rem;
-    }
-    
-    .step-item.active {
-        opacity: 1;
-        transform: translateX(0) !important;
-    }
-    .list-group-item {
-        background-color: var(--step-bg) !important;
-        color: var(--text-color) !important;
-    }
-    
-    .text-muted {
-        color: var(--text-muted) !important;
-    }
-    
-    .dropzone {
-        position: relative;
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        cursor: pointer;
-        border: var(--dropzone-border);
-        background: var(--dropzone-bg);
-        backdrop-filter: blur(10px);
-        overflow: hidden;
-    }
-    
-    .dropzone::before {
-        content: "";
+    #particles-js {
         position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(45deg, var(--bs-primary), var(--accent-color));
-        opacity: 0;
-        transition: opacity 0.4s ease;
-        z-index: 0;
-    }
-    
-    .dropzone:hover {
-        transform: scale(1.05) translateY(-5px);
-        border-color: var(--dropzone-hover-border);
-        box-shadow: var(--dropzone-hover-shadow);
-    }
-    
-    .dropzone:hover::before {
-        opacity: 0.1;
-    }
-    
-    .dropzone-content {
-        position: relative;
+        top: 0;
+        left: 0;
         z-index: 1;
     }
     
-    .upload-icon {
-        font-size: 5rem;
-        margin-bottom: 1rem;
-        color: var(--upload-icon-color);
+    /* Curved divider */
+    .hero-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+        z-index: 2;
+    }
+    
+    .hero-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 50px;
+    }
+    
+    .hero-divider .shape-fill {
+        fill: var(--hero-divider-color);
+    }
+    
+    /* Step card gradients */
+    .step-card {
         transition: all 0.4s ease;
+        border: none;
+        background: transparent;
     }
     
-    .dropzone:hover .upload-icon {
-        transform: translateY(-10px);
-        color: var(--upload-icon-hover);
+    .step-card .card-body {
+        border-radius: 1rem;
     }
     
+    /* Custom file upload button */
     .file-upload-btn {
         position: relative;
         overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 4px 15px var(--button-shadow);
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
     }
     
     .file-upload-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--btn-shadow);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px var(--button-shadow);
     }
     
     .file-upload-btn input[type="file"] {
@@ -203,55 +115,37 @@
         display: block;
     }
     
-    .form-upload {
-        opacity: 0;
-        transform: translateY(30px);
-        animation: formFade 1s ease 1.8s forwards;
+    /* Floating card effect */
+    .floating-card {
+        transition: all 0.4s ease;
     }
     
-    .calendar-section {
-        transform: scale(0.95);
-        opacity: 0;
-        animation: calendarFade 1s ease 2s forwards;
+    .floating-card:hover {
+        transform: translateY(-5px);
     }
     
-    /* Animations */
-    @keyframes titleFade {
-        0% { opacity: 0; transform: translateY(-30px); }
-        100% { opacity: 1; transform: translateY(0); }
+    /* Dropzone */
+    .dropzone {
+        border: 2px dashed var(--dropzone-border);
+        background: var(--dropzone-bg);
+        transition: all 0.3s ease;
+        position: relative;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
-    @keyframes subtitleFade {
-        0% { opacity: 0; transform: translateY(20px); }
-        100% { opacity: 0.8; transform: translateY(0); }
+    .dropzone.highlight {
+        border-color: var(--dropzone-highlight);
+        background: var(--dropzone-highlight-bg);
     }
     
-    @keyframes floatUp {
-        0% { transform: translateY(50px); opacity: 0; }
-        100% { transform: translateY(0); opacity: 1; }
-    }
-    
-    @keyframes formFade {
-        0% { opacity: 0; transform: translateY(30px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes calendarFade {
-        0% { transform: scale(0.95); opacity: 0; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-    
-    /* Particle effect */
-    .particles {
-        position: absolute;
-        top: 0;
-        left: 0;
+    .dropzone-content {
         width: 100%;
-        height: 100%;
-        z-index: 0;
     }
     
-    /* Custom scrollbar for list */
+    /* Steps container with scrollbar styling */
     .steps-container {
         max-height: 400px;
         overflow-y: auto;
@@ -322,93 +216,89 @@
 {% endblock %}
 
 {% block content %}
-<div class="hero-section mt-3 mb-3">
-    <div class="hero-bg"></div>
-    <div class="particles" id="particles-js"></div>
-    <div class="container hero-content py-3">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                
-                <h1 class="hero-title mb-2">Transform Your Syllabus Into Calendar Events</h1>
-                <p class="hero-subtitle">Extract important dates, assignments, and deadlines with a single click</p>
-                <div class="d-flex gap-3 mt-2">
-                    {% if not current_user.is_authenticated %}
-                    <a href="{{ url_for('google_auth.login') }}" class="btn btn-primary btn-lg">
-                        <i class="bi bi-google me-2"></i> Login with Google
-                    </a>
-                    <a href="{{ url_for('microsoft_auth.login') }}" class="btn {% if theme|default('dark') == 'dark' %}btn-outline-light{% else %}btn-outline-primary{% endif %} btn-lg ms-microsoft">
-                        <i class="bi bi-microsoft me-2"></i> Login with Microsoft
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
+<!-- Hero Section with Particles -->
+<div class="hero-section">
+    <div id="particles-js"></div>
+    <div class="container hero-content">
+        <div id="hero-logo" class="logo-container mb-3">
+            <img src="{{ url_for('static', filename='images/early-bird-logo.svg') }}" alt="Early Bird Logo" class="hero-logo-img" width="120" height="120">
         </div>
+        <h1 class="hero-title">Transform Your Syllabus Into Calendar Events</h1>
+        <p class="hero-subtitle">Automatically extract important dates from course syllabi and create calendar events with a single click</p>
+    </div>
+    <div class="hero-divider">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-5 mb-4 mb-lg-0">
-        <div class="card border-0 shadow-lg h-100 floating-card">
-            <div class="card-header border-0 py-2">
-                <h4 class="m-0">How It Works</h4>
-            </div>
-            <div class="card-body p-0">
-                <div class="steps-container">
-                    <div class="list-group list-group-flush step-item" data-step="1">
-                        <div class="list-group-item border-0 p-3">
-                            <div class="d-flex align-items-center">
-                                <div class="step-circle">1</div>
-                                <div>
-                                    <h6>Upload Your Document</h6>
-                                    <p class="text-muted mb-0 small">Drag and drop or select your syllabus file</p>
+<!-- Main Content -->
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-lg rounded-4 mb-4 floating-card">
+                <div class="card-header rounded-top-4 py-3">
+                    <h4 class="m-0">How It Works</h4>
+                </div>
+                <div class="card-body p-0">
+                    <div class="steps-container">
+                        <div class="list-group list-group-flush step-item" data-step="1">
+                            <div class="list-group-item border-0 p-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="step-circle">1</div>
+                                    <div>
+                                        <h6>Login to Google or Microsoft Accounts</h6>
+                                        <p class="text-muted mb-0 small">Connect your calendar for seamless integration</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="list-group list-group-flush step-item" data-step="2">
-                        <div class="list-group-item border-0 p-3">
-                            <div class="d-flex align-items-center">
-                                <div class="step-circle">2</div>
-                                <div>
-                                    <h6>Smart Date Extraction</h6>
-                                    <p class="text-muted mb-0 small">Our AI identifies important deadlines and assignments</p>
+                        
+                        <div class="list-group list-group-flush step-item" data-step="2">
+                            <div class="list-group-item border-0 p-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="step-circle">2</div>
+                                    <div>
+                                        <h6>Upload Your Document</h6>
+                                        <p class="text-muted mb-0 small">Drag and drop or select your syllabus file</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="list-group list-group-flush step-item" data-step="3">
-                        <div class="list-group-item border-0 p-3">
-                            <div class="d-flex align-items-center">
-                                <div class="step-circle">3</div>
-                                <div>
-                                    <h6>Preview Events</h6>
-                                    <p class="text-muted mb-0 small">Review extracted dates and make any necessary adjustments</p>
+                        
+                        <div class="list-group list-group-flush step-item" data-step="3">
+                            <div class="list-group-item border-0 p-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="step-circle">3</div>
+                                    <div>
+                                        <h6>Preview Events</h6>
+                                        <p class="text-muted mb-0 small">Review extracted dates and make any necessary adjustments</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="list-group list-group-flush step-item" data-step="4">
-                        <div class="list-group-item border-0 p-3">
-                            <div class="d-flex align-items-center">
-                                <div class="step-circle">4</div>
-                                <div>
-                                    <h6>Export to Calendar</h6>
-                                    <p class="text-muted mb-0 small">Send events directly to Google or Microsoft calendar</p>
+                        
+                        <div class="list-group list-group-flush step-item" data-step="4">
+                            <div class="list-group-item border-0 p-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="step-circle">4</div>
+                                    <div>
+                                        <h6>Export to Calendar</h6>
+                                        <p class="text-muted mb-0 small">Send events directly to Google or Microsoft calendar</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="list-group list-group-flush step-item" data-step="5">
-                        <div class="list-group-item border-0 p-3">
-                            <div class="d-flex align-items-center">
-                                <div class="step-circle">5</div>
-                                <div>
-                                    <h6>Stay Organized</h6>
-                                    <p class="text-muted mb-0 small">Never miss another deadline with automatic reminders</p>
+                        
+                        <div class="list-group list-group-flush step-item" data-step="5">
+                            <div class="list-group-item border-0 p-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="step-circle">5</div>
+                                    <div>
+                                        <h6>Stay Organized</h6>
+                                        <p class="text-muted mb-0 small">Never miss another deadline with automatic reminders</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -416,10 +306,9 @@
                 </div>
             </div>
         </div>
-    </div>
     
-    <div class="col-lg-7">
-        
+        <div class="col-lg-7">
+            
 <div class="dropzone rounded-4 shadow-lg p-5 mb-4">
     <div class="dropzone-content text-center">
         <h2 class="mb-3">Drag & Drop Your Syllabus</h2>
@@ -446,24 +335,68 @@
                         <h4>Calendar Integration</h4>
                         <p class="text-muted mb-0 small">Connect with Google Calendar or Microsoft Outlook for seamless event creation</p>
                     </div>
-                    <div class="col-auto">
-                        <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                Connect Calendar
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <a class="dropdown-item" href="{{ url_for('google_auth.login') }}">
-                                        <i class="bi bi-google me-2"></i> Google Calendar
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item ms-dropdown-item" href="{{ url_for('microsoft_auth.login') }}">
-                                        <i class="bi bi-microsoft me-2"></i> Microsoft Outlook
-                                    </a>
-                                </li>
-                            </ul>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        {% if google_oauth_configured %}
+                        <a href="{{ url_for('google_auth.login') }}" class="btn btn-outline-primary w-100 py-2">
+                            <i class="bi bi-google me-2"></i> Login with Google
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('check_google_setup') }}" class="btn btn-outline-secondary w-100 py-2" data-bs-toggle="tooltip" title="Google OAuth not configured">
+                            <i class="bi bi-google me-2"></i> Setup Google Login
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        {% if microsoft_oauth_configured %}
+                        <a href="{{ url_for('microsoft_auth.login') }}" class="btn btn-outline-primary ms-microsoft w-100 py-2">
+                            <i class="bi bi-microsoft me-2"></i> Login with Microsoft
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('check_microsoft_setup') }}" class="btn btn-outline-secondary w-100 py-2" data-bs-toggle="tooltip" title="Microsoft OAuth not configured">
+                            <i class="bi bi-microsoft me-2"></i> Setup Microsoft Login
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Features Section -->
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-lg rounded-4 h-100 floating-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-lightning-charge text-primary" style="font-size: 2.5rem;"></i>
                         </div>
+                        <h4>Fast & Accurate</h4>
+                        <p class="text-muted mb-0">Our intelligent algorithms extract dates with high accuracy in seconds</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow-lg rounded-4 h-100 floating-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-file-earmark-text text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h4>Multiple Formats</h4>
+                        <p class="text-muted mb-0">Support for PDF, Word documents, and plain text files</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 shadow-lg rounded-4 h-100 floating-card">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="bi bi-lock text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h4>Privacy First</h4>
+                        <p class="text-muted mb-0">Your documents are analyzed locally and never stored on our servers</p>
                     </div>
                 </div>
             </div>
@@ -473,56 +406,80 @@
 {% endblock %}
 
 {% block scripts %}
+<!-- Particles.js -->
 <script src="{{ url_for('static', filename='js/particles.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/particle.js') }}"></script>
+
+<!-- Animation Scripts -->
+<script src="{{ url_for('static', filename='js/hero-logo.js') }}"></script>
 <script src="{{ url_for('static', filename='js/upload-animation.js') }}"></script>
+
 <script>
-// Document upload functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const uploadForm = document.getElementById('upload-form');
-    if (!uploadForm) return;
-    
-    const fileInput = uploadForm.querySelector('input[type="file"]');
-    const dropzone = document.querySelector('.dropzone');
-    
-    // Manually trigger form submission when file is selected
-    fileInput.addEventListener('change', function() {
-        if (this.files.length > 0) {
-            console.log('File selected:', this.files[0].name);
-            uploadForm.submit();
-        }
-    });
-    
-    // Enable drag and drop functionality
-    dropzone.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dropzone.classList.add('border-primary');
-    });
-    
-    dropzone.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dropzone.classList.remove('border-primary');
-    });
-    
-    dropzone.addEventListener('drop', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dropzone.classList.remove('border-primary');
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropzone = document.querySelector('.dropzone');
+        const fileInput = document.querySelector('input[type="file"]');
+        const form = document.getElementById('upload-form');
         
-        if (e.dataTransfer.files.length) {
-            fileInput.files = e.dataTransfer.files;
-            console.log('File dropped:', e.dataTransfer.files[0].name);
-            uploadForm.submit();
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
-    });
-    
-    // Also allow clicking anywhere in the dropzone to trigger file selection
-    dropzone.addEventListener('click', function(e) {
-        if (e.target !== fileInput) {
-            fileInput.click();
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropzone.classList.add('highlight');
         }
+        
+        function unhighlight() {
+            dropzone.classList.remove('highlight');
+        }
+        
+        dropzone.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length) {
+                fileInput.files = files;
+                form.submit();
+                
+                // Show animation
+                const animContainer = document.getElementById('animation-container');
+                animContainer.classList.remove('d-none');
+                startUploadAnimation();
+            }
+        }
+        
+        // File input change event
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length) {
+                form.submit();
+                
+                // Show animation
+                const animContainer = document.getElementById('animation-container');
+                animContainer.classList.remove('d-none');
+                startUploadAnimation();
+            }
+        });
     });
-});
 </script>
 {% endblock %}

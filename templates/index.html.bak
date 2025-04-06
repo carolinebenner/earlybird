@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Home - Date Extractor & Calendar Generator{% endblock %}
+{% block title %}Early Bird - Smart Calendar Generation{% endblock %}
 
 {% block styles %}
 <style>
@@ -46,22 +46,28 @@
         --upload-icon-hover: var(--light-hover);
         --btn-shadow: 0 10px 25px rgba(31, 151, 255, 0.3);
         --dropzone-hover-border: rgba(31, 151, 255, 0.6);
+        --microsoft-btn-color: #0078d4;
+        --microsoft-btn-hover-color: #0065b3;
+        --microsoft-btn-shadow: rgba(0, 120, 212, 0.4);
+        --microsoft-btn-color: #0078d4;
+        --microsoft-btn-hover-color: #0065b3;
+        --microsoft-btn-shadow: rgba(0, 120, 212, 0.4);
     }
     
     .hero-section {
         position: relative;
-        min-height: 60vh;
+        min-height: 30vh; /* Reduced from 60vh */
         overflow: hidden;
         background: var(--hero-bg-gradient);
         border-radius: 1rem;
-        margin-bottom: 3rem;
+        margin-bottom: 1rem; /* Reduced from 3rem */
         box-shadow: 0 15px 30px var(--shadow-color);
     }
     
     .hero-content {
         position: relative;
         z-index: 2;
-        padding: 4rem 0;
+        padding: 2rem 0; /* Reduced from 4rem */
     }
     
     .hero-bg {
@@ -77,10 +83,9 @@
     }
     
     .hero-title {
-        font-size: 3.5rem;
+        font-size: 2.8rem;
         font-weight: 700;
         margin-bottom: 1.5rem;
-        line-height: 1.1;
         background: var(--hero-title-gradient);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -88,9 +93,9 @@
     }
     
     .hero-subtitle {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         font-weight: 300;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
         opacity: 0;
         color: var(--text-color);
         animation: subtitleFade 1.5s ease-in-out 0.5s forwards;
@@ -104,16 +109,15 @@
     }
     
     .step-item {
-        transform: translateX(-50px);
-        opacity: 0;
-        transition: all 0.5s ease;
+        opacity: 1;
+        transform: translateX(0) !important;
+        margin-bottom: 0.5rem;
     }
     
     .step-item.active {
-        transform: translateX(0);
         opacity: 1;
+        transform: translateX(0) !important;
     }
-    
     .list-group-item {
         background-color: var(--step-bg) !important;
         color: var(--text-color) !important;
@@ -295,24 +299,44 @@
         background-color: var(--nav-bg) !important;
         border-bottom: var(--card-border);
     }
+    
+    /* Microsoft dropdown item */
+    [data-bs-theme="light"] .ms-dropdown-item:hover {
+        background-color: var(--microsoft-btn-color);
+        color: white;
+    }
+    
+    /* Microsoft button styles */
+    .ms-microsoft.btn-outline-primary {
+        color: var(--microsoft-btn-color);
+        border-color: var(--microsoft-btn-color);
+    }
+    
+    .ms-microsoft.btn-outline-primary:hover {
+        background-color: var(--microsoft-btn-color);
+        border-color: var(--microsoft-btn-color);
+        color: white;
+        box-shadow: 0 4px 15px var(--microsoft-btn-shadow);
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="hero-section">
+<div class="hero-section mt-3 mb-3">
     <div class="hero-bg"></div>
     <div class="particles" id="particles-js"></div>
-    <div class="container hero-content">
+    <div class="container hero-content py-3">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="hero-title">Transform Your Syllabus Into Calendar Events</h1>
+                
+                <h1 class="hero-title mb-2">Transform Your Syllabus Into Calendar Events</h1>
                 <p class="hero-subtitle">Extract important dates, assignments, and deadlines with a single click</p>
-                <div class="d-flex gap-3 mt-4">
+                <div class="d-flex gap-3 mt-2">
                     {% if not current_user.is_authenticated %}
                     <a href="{{ url_for('google_auth.login') }}" class="btn btn-primary btn-lg">
                         <i class="bi bi-google me-2"></i> Login with Google
                     </a>
-                    <a href="{{ url_for('microsoft_auth.login') }}" class="btn btn-outline-light btn-lg">
+                    <a href="{{ url_for('microsoft_auth.login') }}" class="btn {% if theme|default('dark') == 'dark' %}btn-outline-light{% else %}btn-outline-primary{% endif %} btn-lg ms-microsoft">
                         <i class="bi bi-microsoft me-2"></i> Login with Microsoft
                     </a>
                     {% endif %}
@@ -325,66 +349,66 @@
 <div class="row">
     <div class="col-lg-5 mb-4 mb-lg-0">
         <div class="card border-0 shadow-lg h-100 floating-card">
-            <div class="card-header bg-dark border-0">
-                <h4 class="text-white m-0 py-3">How It Works</h4>
+            <div class="card-header border-0 py-2">
+                <h4 class="m-0">How It Works</h4>
             </div>
             <div class="card-body p-0">
                 <div class="steps-container">
                     <div class="list-group list-group-flush step-item" data-step="1">
-                        <div class="list-group-item bg-dark text-white border-0 p-4">
+                        <div class="list-group-item border-0 p-3">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">1</div>
                                 <div>
-                                    <h5>Upload Your Document</h5>
-                                    <p class="text-muted mb-0">Drag and drop or select your syllabus file</p>
+                                    <h6>Login to Google or Microsoft Accounts</h6>
+                                    <p class="text-muted mb-0 small">Connect your calendar for seamless integration</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="list-group list-group-flush step-item" data-step="2">
-                        <div class="list-group-item bg-dark text-white border-0 p-4">
+                        <div class="list-group-item border-0 p-3">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">2</div>
                                 <div>
-                                    <h5>Smart Date Extraction</h5>
-                                    <p class="text-muted mb-0">Our AI identifies important deadlines and assignments</p>
+                                    <h6>Smart Date Extraction</h6>
+                                    <p class="text-muted mb-0 small">Our AI identifies important deadlines and assignments</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="list-group list-group-flush step-item" data-step="3">
-                        <div class="list-group-item bg-dark text-white border-0 p-4">
+                        <div class="list-group-item border-0 p-3">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">3</div>
                                 <div>
-                                    <h5>Preview Events</h5>
-                                    <p class="text-muted mb-0">Review extracted dates and make any necessary adjustments</p>
+                                    <h6>Preview Events</h6>
+                                    <p class="text-muted mb-0 small">Review extracted dates and make any necessary adjustments</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="list-group list-group-flush step-item" data-step="4">
-                        <div class="list-group-item bg-dark text-white border-0 p-4">
+                        <div class="list-group-item border-0 p-3">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">4</div>
                                 <div>
-                                    <h5>Export to Calendar</h5>
-                                    <p class="text-muted mb-0">Send events directly to Google or Microsoft calendar</p>
+                                    <h6>Export to Calendar</h6>
+                                    <p class="text-muted mb-0 small">Send events directly to Google or Microsoft calendar</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="list-group list-group-flush step-item" data-step="5">
-                        <div class="list-group-item bg-dark text-white border-0 p-4">
+                        <div class="list-group-item border-0 p-3">
                             <div class="d-flex align-items-center">
                                 <div class="step-circle">5</div>
                                 <div>
-                                    <h5>Stay Organized</h5>
-                                    <p class="text-muted mb-0">Never miss another deadline with automatic reminders</p>
+                                    <h6>Stay Organized</h6>
+                                    <p class="text-muted mb-0 small">Never miss another deadline with automatic reminders</p>
                                 </div>
                             </div>
                         </div>
@@ -395,49 +419,32 @@
     </div>
     
     <div class="col-lg-7">
-        <div class="dropzone rounded-4 shadow-lg p-5 mb-4">
-            <div class="dropzone-content text-center">
-                <i class="bi bi-cloud-arrow-up upload-icon"></i>
-                <h3 class="text-white mb-3">Drag & Drop Your Syllabus</h3>
-                <p class="text-muted mb-4">Support for PDF, Word documents, and text files</p>
-                <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" class="dropzone-form">
-                    <button type="button" class="btn btn-primary btn-lg file-upload-btn px-4 py-2">
-                        <i class="bi bi-file-earmark-text me-2"></i> Browse Files
-                        <input type="file" id="file" name="file" required>
-                    </button>
-                </form>
-            </div>
-        </div>
         
-        <div class="card border-0 shadow-lg mb-4 form-upload">
-            <div class="card-header bg-dark text-white border-0">
-                <h4 class="mb-0 py-2">Upload Document</h4>
+<div class="dropzone rounded-4 shadow-lg p-5 mb-4">
+    <div class="dropzone-content text-center">
+        <h2 class="mb-3">Drag & Drop Your Syllabus</h2>
+        <p class="text-muted mb-4">Support for PDF, Word documents, and text files</p>
+        <!-- Animation container for upload -->
+        <div id="animation-container" class="mb-4 d-none"></div>
+        <form id="upload-form" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" class="dropzone-form">
+            <button type="button" class="btn btn-primary btn-lg file-upload-btn px-4 py-3">
+                <i class="bi bi-upload me-2"></i> Choose File
+                <input type="file" name="file" accept=".pdf,.docx,.txt">
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Calendar Integration Section -->
+<div class="card border-0 shadow-lg rounded-4 mb-4 floating-card">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <i class="bi bi-calendar-check text-primary" style="font-size: 2rem;"></i>
             </div>
-            <div class="card-body p-4">
-                <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
-                    <div class="input-group input-group-lg">
-                        <input class="form-control" type="file" id="file-form" name="file" required>
-                        <button type="submit" class="btn btn-primary px-4">
-                            <i class="bi bi-magic me-2"></i> Extract Dates
-                        </button>
-                    </div>
-                    <div class="form-text mt-2 text-center">Supported formats: .txt, .pdf, .docx, .doc</div>
-                </form>
-            </div>
-        </div>
-        
-        {% if not current_user.is_authenticated %}
-        <div class="card border-0 shadow-lg calendar-section">
-            <div class="card-body p-4">
-                <div class="row align-items-center">
-                    <div class="col-auto">
-                        <div class="rounded-circle bg-primary bg-opacity-10 p-3">
-                            <i class="bi bi-calendar-check text-primary" style="font-size: 2rem;"></i>
-                        </div>
-                    </div>
-                    <div class="col">
+            <div class="col">
                         <h4>Calendar Integration</h4>
-                        <p class="text-muted mb-0">Connect with Google Calendar or Microsoft Outlook for seamless event creation</p>
+                        <p class="text-muted mb-0 small">Connect with Google Calendar or Microsoft Outlook for seamless event creation</p>
                     </div>
                     <div class="col-auto">
                         <div class="dropdown">
@@ -451,7 +458,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ url_for('microsoft_auth.login') }}">
+                                    <a class="dropdown-item ms-dropdown-item" href="{{ url_for('microsoft_auth.login') }}">
                                         <i class="bi bi-microsoft me-2"></i> Microsoft Outlook
                                     </a>
                                 </li>
@@ -461,61 +468,61 @@
                 </div>
             </div>
         </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/particles.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/upload-animation.js') }}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const dropzone = document.querySelector('.dropzone');
-        const fileInput = document.getElementById('file');
-        
-        if (dropzone && fileInput) {
-            // Prevent default behaviors
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropzone.addEventListener(eventName, preventDefaults, false);
-            });
-            
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            // Highlight dropzone when item is dragged over it
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropzone.addEventListener(eventName, highlight, false);
-            });
-            
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropzone.addEventListener(eventName, unhighlight, false);
-            });
-            
-            function highlight() {
-                dropzone.classList.add('bg-primary');
-                dropzone.classList.remove('bg-dark');
-            }
-            
-            function unhighlight() {
-                dropzone.classList.remove('bg-primary');
-                dropzone.classList.add('bg-dark');
-            }
-            
-            // Handle dropped files
-            dropzone.addEventListener('drop', handleDrop, false);
-            
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                
-                if (files.length) {
-                    fileInput.files = files;
-                    // Auto-submit the form after successful drop
-                    fileInput.form.submit();
-                }
-            }
+// Document upload functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadForm = document.getElementById('upload-form');
+    if (!uploadForm) return;
+    
+    const fileInput = uploadForm.querySelector('input[type="file"]');
+    const dropzone = document.querySelector('.dropzone');
+    
+    // Manually trigger form submission when file is selected
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            console.log('File selected:', this.files[0].name);
+            uploadForm.submit();
         }
     });
+    
+    // Enable drag and drop functionality
+    dropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('border-primary');
+    });
+    
+    dropzone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('border-primary');
+    });
+    
+    dropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('border-primary');
+        
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            console.log('File dropped:', e.dataTransfer.files[0].name);
+            uploadForm.submit();
+        }
+    });
+    
+    // Also allow clicking anywhere in the dropzone to trigger file selection
+    dropzone.addEventListener('click', function(e) {
+        if (e.target !== fileInput) {
+            fileInput.click();
+        }
+    });
+});
 </script>
 {% endblock %}
