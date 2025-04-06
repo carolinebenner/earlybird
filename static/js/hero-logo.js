@@ -41,6 +41,10 @@ document.addEventListener('DOMContentLoaded', function() {
         navbar.style.width = '100%';
         navbar.style.zIndex = '1000';
         
+        // Add GPU acceleration to smooth transitions
+        heroSection.style.transform = 'translateZ(0)';
+        logoImg.style.transform = 'translateZ(0)';
+        
         // Make main content fade in after scroll
         mainContent.style.opacity = '0';
         mainContent.style.transform = 'translateY(30px)';
@@ -55,57 +59,72 @@ document.addEventListener('DOMContentLoaded', function() {
         if (heroSubtitle) heroSubtitle.classList.add('fade-in-delay-2');
         if (heroButtons) heroButtons.classList.add('fade-in-delay-3');
         
-        // Function to handle scroll effect
+        // Variables for smooth scrolling
+        let lastScrollY = window.scrollY;
+        let ticking = false;
+        
+        // Function to handle scroll effect with debouncing
         function handleScroll() {
             const scrollPosition = window.scrollY;
             const windowHeight = window.innerHeight;
             
-            // Calculate scroll percentage (0 to 1)
-            const scrollPercentage = Math.min(scrollPosition / (windowHeight * 0.6), 1);
-            
-            // Adjust hero section height and opacity
-            heroSection.style.height = `${Math.max(100 - scrollPercentage * 100, 0)}vh`;
-            heroSection.style.opacity = Math.max(1 - scrollPercentage * 1.5, 0);
-            
-            // Scale logo based on scroll
-            const logoScale = Math.max(1 - scrollPercentage * 0.7, 0.3);
-            logoImg.style.transform = `scale(${logoScale})`;
-            
-            // Fade in navbar background after scrolling a bit
-            if (scrollPercentage > 0.1) {
-                navbar.classList.add('scrolled');
-                navbar.classList.remove('top');
-            } else {
-                navbar.classList.remove('scrolled');
-                navbar.classList.add('top');
+            // Use requestAnimationFrame for smoother animations
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    // Calculate scroll percentage (0 to 1)
+                    const scrollPercentage = Math.min(scrollPosition / (windowHeight * 0.6), 1);
+                    
+                    // Adjust hero section height and opacity
+                    heroSection.style.height = `${Math.max(100 - scrollPercentage * 100, 0)}vh`;
+                    heroSection.style.opacity = Math.max(1 - scrollPercentage * 1.5, 0);
+                    
+                    // Scale logo based on scroll with GPU acceleration
+                    const logoScale = Math.max(1 - scrollPercentage * 0.7, 0.3);
+                    logoImg.style.transform = `scale(${logoScale}) translateZ(0)`;
+                    
+                    // Fade in navbar background after scrolling a bit
+                    if (scrollPercentage > 0.1) {
+                        navbar.classList.add('scrolled');
+                        navbar.classList.remove('top');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                        navbar.classList.add('top');
+                    }
+                    
+                    // Show main content when hero section starts to shrink
+                    if (scrollPercentage > 0.3) {
+                        mainContent.style.opacity = '1';
+                        mainContent.style.transform = 'translateY(0)';
+                    }
+                    
+                    // Hide hero section completely when fully scrolled
+                    if (scrollPercentage >= 1) {
+                        heroSection.classList.add('hero-hidden');
+                    } else {
+                        heroSection.classList.remove('hero-hidden');
+                    }
+                    
+                    ticking = false;
+                });
+                
+                ticking = true;
             }
             
-            // Show main content when hero section starts to shrink
-            if (scrollPercentage > 0.3) {
-                mainContent.style.opacity = '1';
-                mainContent.style.transform = 'translateY(0)';
-            }
-            
-            // Hide hero section completely when fully scrolled
-            if (scrollPercentage >= 1) {
-                heroSection.classList.add('hero-hidden');
-            } else {
-                heroSection.classList.remove('hero-hidden');
-            }
+            lastScrollY = scrollPosition;
         }
         
         // Initial call to set positions
         handleScroll();
         
-        // Add scroll event listener
-        window.addEventListener('scroll', handleScroll);
+        // Add scroll event listener with passive option for better performance
+        window.addEventListener('scroll', handleScroll, { passive: true });
         
         // Initialize particles for hero section
         if (typeof particlesJS !== 'undefined') {
             particlesJS("particles-hero", {
                 "particles": {
                     "number": {
-                        "value": 80,
+                        "value": 60, // Reduced particle count for better performance
                         "density": {
                             "enable": true,
                             "value_area": 800
