@@ -2,77 +2,283 @@
 
 {% block title %}About Us - Date Extractor & Calendar Generator{% endblock %}
 
+{% block styles %}
+<style>
+    .hero-about {
+        position: relative;
+        background: linear-gradient(125deg, #0f0f0f 0%, #1d1d1d 100%);
+        border-radius: 1rem;
+        overflow: hidden;
+        padding: 3rem 0;
+        margin-bottom: 3rem;
+    }
+    
+    .hero-about::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(#3b82f6 0.5px, transparent 0.5px);
+        background-size: 25px 25px;
+        opacity: 0.3;
+        z-index: 0;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .about-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(90deg, #f0f0f0, #7fb9ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .about-subtitle {
+        font-size: 1.5rem;
+        font-weight: 300;
+        margin-bottom: 2rem;
+        opacity: 0.8;
+    }
+    
+    .feature-card {
+        transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+        background: rgba(20, 20, 20, 0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        height: 100%;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        display: inline-block;
+        color: #3b82f6;
+        background: rgba(59, 130, 246, 0.1);
+        width: 80px;
+        height: 80px;
+        line-height: 80px;
+        text-align: center;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover .feature-icon {
+        transform: scale(1.1) rotate(10deg);
+        background: rgba(59, 130, 246, 0.2);
+    }
+    
+    .feature-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    
+    .privacy-card {
+        background: linear-gradient(135deg, rgba(30, 30, 30, 0.8), rgba(20, 20, 20, 0.8));
+        border-radius: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        margin-top: 3rem;
+        transform: translateY(30px);
+        opacity: 0;
+        animation: fadeUp 1s ease 0.5s forwards;
+    }
+    
+    @keyframes fadeUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .cta-button {
+        position: relative;
+        display: inline-block;
+        padding: 1rem 3rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        border-radius: 0.5rem;
+        border: none;
+        transition: all 0.4s ease;
+    }
+    
+    .cta-button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: all 0.6s ease;
+    }
+    
+    .cta-button:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.5);
+    }
+    
+    .cta-button:hover::before {
+        left: 100%;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">About Us</h2>
-            </div>
-            <div class="card-body">
-                <h4 class="mb-4">Our Mission</h4>
-                <p class="lead">
-                    We're on a mission to simplify academic planning by eliminating the tedious task of manually entering deadline dates from syllabi into digital calendars.
+<div class="hero-about">
+    <div class="container hero-content text-center">
+        <h1 class="about-title">About Syllabus Extractor</h1>
+        <p class="about-subtitle">Simplifying academic planning through intelligent document processing</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h2 class="mb-4">Our Mission</h2>
+            <p class="lead mb-5">
+                We're on a mission to eliminate the tedious task of manually entering deadline dates from syllabi into digital calendars, helping students and educators stay organized effortlessly.
+            </p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="feature-card p-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-lightbulb feature-icon"></i>
+                    <h3 class="feature-title">Why We Built This</h3>
+                </div>
+                <p>
+                    As former students, we experienced the beginning-of-semester rush to organize multiple course syllabi and track numerous deadlines across different classes.
                 </p>
-                
-                <div class="row mt-5">
-                    <div class="col-md-6">
-                        <div class="card mb-4 h-100">
-                            <div class="card-header">
-                                <h5><i class="bi bi-lightbulb"></i> Why We Built This</h5>
-                            </div>
-                            <div class="card-body">
-                                <p>
-                                    As former students, we experienced the beginning-of-semester rush to organize multiple course syllabi and track numerous deadlines across different classes. This tool was born from that experience.
-                                </p>
-                                <p>
-                                    Our goal is to help students, professors, and academic professionals save time and stay organized by automating the extraction of deadlines from course documents.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card mb-4 h-100">
-                            <div class="card-header">
-                                <h5><i class="bi bi-gear"></i> How It Works</h5>
-                            </div>
-                            <div class="card-body">
-                                <p>
-                                    Our application uses advanced text analysis and pattern recognition to identify assessment deadlines in academic documents. It's specifically designed to extract:
-                                </p>
-                                <ul>
-                                    <li>Assignment due dates</li>
-                                    <li>Quiz and exam schedules</li>
-                                    <li>Project deadlines</li>
-                                    <li>Presentation dates</li>
-                                </ul>
-                                <p>
-                                    Once extracted, these dates can be converted to calendar events for your preferred digital calendar.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                <p>
+                    Our goal is to help students, professors, and academic professionals save time and stay organized by automating the extraction of important dates from documents.
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="feature-card p-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-gear feature-icon"></i>
+                    <h3 class="feature-title">How It Works</h3>
                 </div>
-                
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h5><i class="bi bi-shield-check"></i> Privacy & Security</h5>
-                    </div>
-                    <div class="card-body">
-                        <p>
-                            We take your privacy seriously. The documents you upload are processed temporarily and not permanently stored on our servers. Your information is never shared with third parties.
-                        </p>
-                        <p>
-                            When you connect your Google or Microsoft account, we only request the minimum necessary permissions to add events to your calendar, and you can revoke these permissions at any time.
-                        </p>
-                    </div>
+                <p>
+                    Our application uses advanced text analysis and pattern recognition to identify assessment deadlines in academic documents. It's specifically designed to extract:
+                </p>
+                <ul>
+                    <li>Assignment due dates</li>
+                    <li>Quiz and exam schedules</li>
+                    <li>Project deadlines</li>
+                    <li>Presentation dates</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="feature-card p-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-calendar2-check feature-icon"></i>
+                    <h3 class="feature-title">Calendar Integration</h3>
                 </div>
-                
-                <div class="text-center mt-5">
-                    <a href="{{ url_for('index') }}" class="btn btn-primary">Try It Now</a>
-                </div>
+                <p>
+                    Once dates are extracted, they can be seamlessly exported to:
+                </p>
+                <ul>
+                    <li>Google Calendar</li>
+                    <li>Microsoft Outlook</li>
+                    <li>Apple Calendar (via .ics files)</li>
+                    <li>Any calendar app that supports .ics format</li>
+                </ul>
+                <p>
+                    Stay organized across all your devices with automatic synchronization.
+                </p>
             </div>
         </div>
     </div>
+    
+    <div class="privacy-card">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center mb-4 mb-md-0">
+                <i class="bi bi-shield-check" style="font-size: 4rem; color: #3b82f6;"></i>
+            </div>
+            <div class="col-md-10">
+                <h3 class="mb-3">Privacy & Security</h3>
+                <p>
+                    We take your privacy seriously. The documents you upload are processed temporarily and not permanently stored on our servers. Your information is never shared with third parties.
+                </p>
+                <p class="mb-0">
+                    When you connect your Google or Microsoft account, we only request the minimum necessary permissions to add events to your calendar, and you can revoke these permissions at any time.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center my-5">
+        <a href="{{ url_for('index') }}" class="cta-button text-white text-decoration-none">
+            Try It Now <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate feature cards on scroll
+        const featureCards = document.querySelectorAll('.feature-card');
+        
+        function isInViewport(element) {
+            const rect = element.getBoundingClientRect();
+            return (
+                rect.top >= 0 &&
+                rect.left >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+            );
+        }
+        
+        function animateOnScroll() {
+            featureCards.forEach(card => {
+                if (isInViewport(card)) {
+                    card.style.opacity = "1";
+                    card.style.transform = "translateY(0)";
+                }
+            });
+        }
+        
+        // Set initial state
+        featureCards.forEach(card => {
+            card.style.opacity = "0";
+            card.style.transform = "translateY(30px)";
+            card.style.transition = "all 0.6s cubic-bezier(0.215, 0.61, 0.355, 1)";
+        });
+        
+        // Trigger once on load
+        setTimeout(animateOnScroll, 300);
+        
+        // Add scroll listener
+        window.addEventListener('scroll', animateOnScroll);
+    });
+</script>
 {% endblock %}
