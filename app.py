@@ -84,13 +84,17 @@ def allowed_file(filename):
 @app.route('/')
 def index():
     """Render index page with file upload form."""
-    return render_template('index.html')
+    # Get the theme preference from cookies, default to dark
+    theme = request.cookies.get('theme', 'dark')
+    return render_template('index.html', theme=theme)
 
 
 @app.route('/about')
 def about():
     """Render about us page."""
-    return render_template('about.html')
+    # Get the theme preference from cookies, default to dark
+    theme = request.cookies.get('theme', 'dark')
+    return render_template('about.html', theme=theme)
 
 @app.route('/check-google-setup')
 def check_google_setup():
@@ -124,7 +128,9 @@ def check_google_setup():
         "google_error": google_error
     }
     
-    return render_template('check_setup.html', setup_info=setup_info)
+    # Get the theme preference from cookies, default to dark
+    theme = request.cookies.get('theme', 'dark')
+    return render_template('check_setup.html', setup_info=setup_info, theme=theme)
 
 
 @app.route('/check-microsoft-setup')
@@ -159,7 +165,9 @@ def check_microsoft_setup():
         "ms_error": ms_error
     }
     
-    return render_template('check_microsoft_setup.html', setup_info=setup_info)
+    # Get the theme preference from cookies, default to dark
+    theme = request.cookies.get('theme', 'dark')
+    return render_template('check_microsoft_setup.html', setup_info=setup_info, theme=theme)
 
 
 @app.route('/microsoft-setup-detail')
@@ -486,7 +494,9 @@ def upload_file():
             # Store only the session ID in the cookie
             session['session_id'] = session_id
             
-            return render_template('preview.html', events=events_preview, session_id=session_id)
+            # Get the theme preference from cookies, default to dark
+            theme = request.cookies.get('theme', 'dark')
+            return render_template('preview.html', events=events_preview, session_id=session_id, theme=theme)
         
         except Exception as e:
             logger.error(f"Error processing file: {e}")
@@ -606,17 +616,36 @@ def generate_calendar():
     has_google = current_user.is_authenticated and current_user.google_token is not None
     has_outlook = current_user.is_authenticated and current_user.microsoft_token is not None
     
+    # Get the theme preference from cookies, default to dark
+    theme = request.cookies.get('theme', 'dark')
     return render_template('download.html', 
                           files=created_files, 
                           calendar_results=calendar_results,
                           is_authenticated=current_user.is_authenticated,
                           has_google=has_google,
-                          has_outlook=has_outlook)
+                          has_outlook=has_outlook,
+                          theme=theme)
 
 
 @app.route('/download/<filename>')
 def download_file(filename):
     return send_from_directory(app.config['CALENDAR_FOLDER'], filename, as_attachment=True)
+
+
+@app.route('/toggle-theme/<theme>')
+def toggle_theme(theme):
+    """Toggle the application theme between dark and light mode."""
+    # Validate that theme is either 'dark' or 'light'
+    if theme not in ['dark', 'light']:
+        return redirect(url_for('index'))
+    
+    # Create a response that redirects to the referring page or home
+    response = redirect(request.referrer or url_for('index'))
+    
+    # Set the theme cookie that expires in 1 year
+    response.set_cookie('theme', theme, max_age=60*60*24*365)
+    
+    return response
 
 
 if __name__ == '__main__':
