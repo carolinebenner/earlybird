@@ -420,7 +420,7 @@
     <div class="col-lg-7">
         <div class="dropzone rounded-4 shadow-lg p-5 mb-4">
             <div class="dropzone-content text-center">
-                <div id="animation-container" class="animation-container mb-4"></div>
+                <img src="{{ url_for('static', filename='images/paper-to-calendar.svg') }}" alt="Paper to Calendar Animation" class="img-fluid" style="max-height: 180px;">
                 <h3 class="mb-3">Drag & Drop Your Syllabus</h3>
                 <p class="text-muted mb-4">Support for PDF, Word documents, and text files</p>
                 <form id="upload-form" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" id="upload-form" class="dropzone-form">
