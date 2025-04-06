@@ -56,18 +56,18 @@
     
     .hero-section {
         position: relative;
-        min-height: 60vh;
+        min-height: 30vh; /* Reduced from 60vh */
         overflow: hidden;
         background: var(--hero-bg-gradient);
         border-radius: 1rem;
-        margin-bottom: 3rem;
+        margin-bottom: 1rem; /* Reduced from 3rem */
         box-shadow: 0 15px 30px var(--shadow-color);
     }
     
     .hero-content {
         position: relative;
         z-index: 2;
-        padding: 4rem 0;
+        padding: 2rem 0; /* Reduced from 4rem */
     }
     
     .hero-bg {
@@ -83,7 +83,7 @@
     }
     
     .hero-title {
-        font-size: 3.5rem;
+        font-size: 2.8rem;
         font-weight: 700;
         margin-bottom: 1.5rem;
         background: var(--hero-title-gradient);
@@ -93,9 +93,9 @@
     }
     
     .hero-subtitle {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         font-weight: 300;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
         opacity: 0;
         color: var(--text-color);
         animation: subtitleFade 1.5s ease-in-out 0.5s forwards;
@@ -322,15 +322,15 @@
 {% endblock %}
 
 {% block content %}
-<div class="hero-section mt-5 mb-5">
+<div class="hero-section mt-3 mb-3">
     <div class="hero-bg"></div>
     <div class="particles" id="particles-js"></div>
-    <div class="container hero-content">
+    <div class="container hero-content py-3">
         <div class="row align-items-center">
             <div class="col-lg-8">
                 <h1 class="hero-title">Transform Your Syllabus Into Calendar Events</h1>
                 <p class="hero-subtitle">Extract important dates, assignments, and deadlines with a single click</p>
-                <div class="d-flex gap-3 mt-4">
+                <div class="d-flex gap-3 mt-2">
                     {% if not current_user.is_authenticated %}
                     <a href="{{ url_for('google_auth.login') }}" class="btn btn-primary btn-lg">
                         <i class="bi bi-google me-2"></i> Login with Google
