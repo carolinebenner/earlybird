@@ -364,7 +364,7 @@ def microsoft_setup_detail():
     """
 
 
-@app.route('/upload', methods=['POST'])
+@app.route('/upload_file', methods=['POST'])
 def upload_file():
     """Handle file upload and process it for dates."""
     if 'file' not in request.files:

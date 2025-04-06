@@ -80,13 +80,12 @@
         opacity: 0.5;
         background-image: radial-gradient(var(--hero-dots-color) 0.5px, transparent 0.5px);
         background-size: 25px 25px;
-        --microsoft-btn-color: #0078D4; /* Microsoft brand color */
+    }
     
     .hero-title {
         font-size: 3.5rem;
         font-weight: 700;
         margin-bottom: 1.5rem;
-        --microsoft-btn-color: #2B88D8; /* Slightly lighter Microsoft color for dark mode */
         background: var(--hero-title-gradient);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -424,6 +423,8 @@
     <div class="dropzone-content text-center">
         <h2 class="mb-3">Drag & Drop Your Syllabus</h2>
         <p class="text-muted mb-4">Support for PDF, Word documents, and text files</p>
+        <!-- Animation container for upload -->
+        <div id="animation-container" class="mb-4 d-none"></div>
         <form id="upload-form" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" class="dropzone-form">
             <button type="button" class="btn btn-primary btn-lg file-upload-btn px-4 py-3">
                 <i class="bi bi-upload me-2"></i> Choose File
@@ -472,61 +473,55 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/particles.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/upload-animation.js') }}"></script>
+<script>
+// Document upload functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadForm = document.getElementById('upload-form');
+    if (!uploadForm) return;
+    
+    const fileInput = uploadForm.querySelector('input[type="file"]');
+    const dropzone = document.querySelector('.dropzone');
+    
+    // Manually trigger form submission when file is selected
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            console.log('File selected:', this.files[0].name);
+            uploadForm.submit();
+        }
+    });
+    
+    // Enable drag and drop functionality
+    dropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('border-primary');
+    });
+    
+    dropzone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('border-primary');
+    });
+    
+    dropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('border-primary');
+        
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            console.log('File dropped:', e.dataTransfer.files[0].name);
+            uploadForm.submit();
+        }
+    });
+    
+    // Also allow clicking anywhere in the dropzone to trigger file selection
+    dropzone.addEventListener('click', function(e) {
+        if (e.target !== fileInput) {
+            fileInput.click();
+        }
+    });
+});
+</script>
 {% endblock %}
-
-        color: white;
-        box-shadow: 0 4px 15px var(--microsoft-btn-shadow);
-    }
-<style>
-    /* Custom styling for upload section to match the screenshot */
-    .dropzone {
-        border: 2px dashed #8e6eff;
-        background-color: rgba(24, 23, 35, 0.9);
-        border-radius: 20px !important;
-        padding: 50px !important;
-    }
-    
-    .btn-primary.file-upload-btn {
-        background-color: #7960f9;
-        border-color: #7960f9;
-        border-radius: 8px;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        box-shadow: 0 4px 15px rgba(121, 96, 249, 0.5);
-    }
-    
-    .btn-primary.file-upload-btn:hover {
-        background-color: #6d5bec;
-        border-color: #6d5bec;
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(121, 96, 249, 0.7);
-    }
-    
-    /* Add particles styling */
-    .dropzone-particles {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        z-index: 0;
-        opacity: 0.3;
-    }
-    
-    [data-bs-theme="light"] .dropzone {
-        border: 2px dashed #1f97ff;
-        background-color: rgba(240, 249, 255, 0.9);
-    }
-    
-    [data-bs-theme="light"] .btn-primary.file-upload-btn {
-        background-color: #1f97ff;
-        border-color: #1f97ff;
-        box-shadow: 0 4px 15px rgba(31, 151, 255, 0.5);
-    }
-    
-    [data-bs-theme="light"] .btn-primary.file-upload-btn:hover {
-        background-color: #0076e4;
-        border-color: #0076e4;
-        box-shadow: 0 8px 20px rgba(31, 151, 255, 0.7);
-    }
-</style>
