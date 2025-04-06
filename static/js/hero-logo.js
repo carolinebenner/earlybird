@@ -36,14 +36,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Store the original navbar logo size
         const originalNavLogoHeight = parseInt(window.getComputedStyle(navbarLogo).height);
         
-        // Initially make navbar transparent
-        navbar.classList.add('top');
-        navbar.style.backgroundColor = 'transparent';
-        navbar.style.boxShadow = 'none';
+        // Initially hide navbar completely
+        navbar.style.opacity = '0';
+        navbar.style.transform = 'translateY(-100%)';
         navbar.style.position = 'fixed';
         navbar.style.top = '0';
         navbar.style.width = '100%';
         navbar.style.zIndex = '1000';
+        navbar.style.transition = 'opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease';
         
         // Add GPU acceleration to smooth transitions
         heroSection.style.transform = 'translateZ(0)';
@@ -63,86 +63,99 @@ document.addEventListener('DOMContentLoaded', function() {
         if (heroSubtitle) heroSubtitle.classList.add('fade-in-delay-2');
         if (heroButtons) heroButtons.classList.add('fade-in-delay-3');
         
-        // Variables for smooth scrolling
-        let lastScrollY = window.scrollY;
-        let ticking = false;
+        // Use animation frames to control smooth animations
+        let lastScrollPosition = 0;
+        let animationFrameId = null;
         
-        // Function to handle scroll effect with debouncing
-        function handleScroll() {
+        // Function to update the animation based on scroll position
+        function updateAnimation() {
             const scrollPosition = window.scrollY;
             const windowHeight = window.innerHeight;
             
-            // Use requestAnimationFrame for smoother animations
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    // Calculate scroll percentage (0 to 1)
-                    const scrollPercentage = Math.min(scrollPosition / (windowHeight * 0.6), 1);
-                    
-                    // Adjust hero section height and opacity
-                    heroSection.style.height = `${Math.max(100 - scrollPercentage * 100, 0)}vh`;
-                    heroSection.style.opacity = Math.max(1 - scrollPercentage * 1.5, 0);
-                    
-                    // Scale logo based on scroll with GPU acceleration
-                    const logoScale = Math.max(1 - scrollPercentage * 0.7, 0.3);
-                    logoImg.style.transform = `scale(${logoScale}) translateZ(0)`;
-                    
-                    // Increase navbar logo size when scrolled
-                    if (scrollPercentage > 0.7) {
-                        // When hero is almost gone, make navbar logo bigger
-                        const newLogoHeight = originalNavLogoHeight * 1.4; // 40% bigger
-                        navbarLogo.style.height = `${newLogoHeight}px`;
-                        navbarLogo.style.transition = 'height 0.3s ease';
-                    } else {
-                        // Reset to original size when at top
-                        navbarLogo.style.height = `${originalNavLogoHeight}px`;
-                    }
-                    
-                    // Fade in navbar background after scrolling a bit
-                    if (scrollPercentage > 0.1) {
-                        navbar.classList.add('scrolled');
-                        navbar.classList.remove('top');
-                    } else {
-                        navbar.classList.remove('scrolled');
-                        navbar.classList.add('top');
-                    }
-                    
-                    // Show main content when hero section starts to shrink
-                    if (scrollPercentage > 0.3) {
-                        mainContent.style.opacity = '1';
-                        mainContent.style.transform = 'translateY(0)';
-                    }
-                    
-                    // Hide hero section completely when fully scrolled
-                    if (scrollPercentage >= 1) {
-                        heroSection.classList.add('hero-hidden');
-                    } else {
-                        heroSection.classList.remove('hero-hidden');
-                    }
-                    
-                    ticking = false;
-                });
+            // Calculate scroll percentage (0 to 1)
+            const scrollPercentage = Math.min(scrollPosition / (windowHeight * 0.6), 1);
+            
+            // Adjust hero section height and opacity
+            heroSection.style.height = `${Math.max(100 - scrollPercentage * 100, 0)}vh`;
+            heroSection.style.opacity = Math.max(1 - scrollPercentage * 1.5, 0);
+            
+            // Scale logo based on scroll with GPU acceleration
+            const logoScale = Math.max(1 - scrollPercentage * 0.7, 0.3);
+            logoImg.style.transform = `scale(${logoScale}) translateZ(0)`;
+            
+            // Show/hide navbar based on scroll position
+            if (scrollPercentage > 0.2) {
+                // Show navbar when scrolled a bit
+                navbar.style.opacity = '1';
+                navbar.style.transform = 'translateY(0)';
+                navbar.style.backgroundColor = 'var(--nav-bg)';
+                navbar.style.boxShadow = '0 2px 15px var(--shadow-color)';
                 
-                ticking = true;
+                // When hero is almost gone, make navbar logo bigger
+                if (scrollPercentage > 0.7) {
+                    const newLogoHeight = originalNavLogoHeight * 1.4; // 40% bigger
+                    navbarLogo.style.height = `${newLogoHeight}px`;
+                    navbarLogo.style.transition = 'height 0.3s ease';
+                    navbar.classList.add('scrolled');
+                } else {
+                    // Reset to original size when at mid-scroll
+                    navbarLogo.style.height = `${originalNavLogoHeight}px`;
+                    navbar.classList.remove('scrolled');
+                }
+            } else {
+                // Hide navbar when at top
+                navbar.style.opacity = '0';
+                navbar.style.transform = 'translateY(-100%)';
+                navbar.style.backgroundColor = 'transparent';
+                navbar.style.boxShadow = 'none';
+                navbar.classList.remove('scrolled');
             }
             
-            lastScrollY = scrollPosition;
+            // Show main content when hero section starts to shrink
+            if (scrollPercentage > 0.3) {
+                mainContent.style.opacity = '1';
+                mainContent.style.transform = 'translateY(0)';
+            } else {
+                mainContent.style.opacity = '0';
+                mainContent.style.transform = 'translateY(30px)';
+            }
+            
+            // Hide hero section completely when fully scrolled
+            if (scrollPercentage >= 1) {
+                heroSection.classList.add('hero-hidden');
+            } else {
+                heroSection.classList.remove('hero-hidden');
+            }
+            
+            // Store last position
+            lastScrollPosition = scrollPosition;
+        }
+        
+        // Use throttled scroll handler to avoid performance issues
+        function handleScroll() {
+            if (!animationFrameId) {
+                animationFrameId = window.requestAnimationFrame(() => {
+                    updateAnimation();
+                    animationFrameId = null;
+                });
+            }
         }
         
         // Initial call to set positions
-        handleScroll();
+        updateAnimation();
         
         // Add scroll event listener with passive option for better performance
         window.addEventListener('scroll', handleScroll, { passive: true });
         
-        // Initialize particles for hero section
-        if (typeof particlesJS !== 'undefined') {
+        // Initialize particles for hero section only if the screen is large enough
+        if (typeof particlesJS !== 'undefined' && window.innerWidth > 768) {
             particlesJS("particles-hero", {
                 "particles": {
                     "number": {
-                        "value": 60, // Reduced particle count for better performance
+                        "value": 40, // Reduced particle count for better performance
                         "density": {
                             "enable": true,
-                            "value_area": 800
+                            "value_area": 1000
                         }
                     },
                     "color": {
@@ -159,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     },
                     "opacity": {
-                        "value": 0.5,
+                        "value": 0.4,
                         "random": false,
                         "anim": {
                             "enable": false,
@@ -182,12 +195,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         "enable": true,
                         "distance": 150,
                         "color": "#8f6afd",
-                        "opacity": 0.4,
+                        "opacity": 0.3,
                         "width": 1
                     },
                     "move": {
                         "enable": true,
-                        "speed": 2,
+                        "speed": 1.5,
                         "direction": "none",
                         "random": false,
                         "straight": false,
@@ -217,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         "grab": {
                             "distance": 140,
                             "line_linked": {
-                                "opacity": 1
+                                "opacity": 0.8
                             }
                         },
                         "bubble": {

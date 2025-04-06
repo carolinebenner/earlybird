@@ -10,30 +10,36 @@
     overflow: hidden;
     position: relative;
     background: var(--hero-bg-gradient, linear-gradient(145deg, #1a1a2e, #16213e));
-    transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+    transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
     z-index: 10;
-    will-change: height, opacity; /* Hint browser about changing properties */
-    -webkit-backface-visibility: hidden; /* Reduce potential glitches */
+    will-change: height, opacity;
+    -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
 }
 
 /* Hero logo styling */
 #hero-logo {
     max-width: 80%;
     max-height: 60vh;
-    transition: transform 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+    transition: transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
     opacity: 1;
     z-index: 20;
-    will-change: transform; /* Optimize for transform changes */
+    will-change: transform;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
 }
 
 /* Styles for the sticky header */
 #mainNav {
     transition: all 0.3s ease;
     z-index: 1000;
-    will-change: background-color, box-shadow;
+    will-change: transform, opacity, background-color, box-shadow;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 #mainNav.scrolled {
@@ -49,7 +55,7 @@
 /* Main content wrapper with transition */
 .content-wrapper {
     padding-top: 2rem;
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease;
     will-change: opacity, transform;
 }
 
@@ -73,6 +79,11 @@
 /* Adjust navbar for scrolled state */
 .navbar-brand .nav-logo {
     transition: all 0.3s ease;
+    will-change: height, transform;
+}
+
+#mainNav.scrolled .navbar-brand img {
+    transform: scale(1.1);
 }
 
 /* Only on the homepage */
@@ -82,7 +93,7 @@ body.is-homepage {
 }
 
 body.is-homepage .hero-section {
-    margin-top: 5rem;
+    margin-top: 7rem;
 }
 
 /* Fade-in animation for content */
@@ -120,12 +131,14 @@ body.is-homepage .hero-section {
     animation: fadeIn 0.8s ease 0.6s forwards;
 }
 
-/* Navbar logo animation */
-.navbar-brand img {
-    transition: height 0.3s ease, transform 0.3s ease;
-    will-change: height, transform;
+/* Hide scrollbar during hero animation */
+body.is-homepage::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    background: transparent;
 }
 
-#mainNav.scrolled .navbar-brand img {
-    transform: scale(1.1);
+body.is-homepage {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
 }
