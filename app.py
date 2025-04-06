@@ -86,6 +86,12 @@ def index():
     """Render index page with file upload form."""
     return render_template('index.html')
 
+
+@app.route('/about')
+def about():
+    """Render about us page."""
+    return render_template('about.html')
+
 @app.route('/check-google-setup')
 def check_google_setup():
     """Check Google OAuth setup status."""

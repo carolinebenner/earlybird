@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block title %}About Us - Date Extractor & Calendar Generator{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">About Us</h2>
+            </div>
+            <div class="card-body">
+                <h4 class="mb-4">Our Mission</h4>
+                <p class="lead">
+                    We're on a mission to simplify academic planning by eliminating the tedious task of manually entering deadline dates from syllabi into digital calendars.
+                </p>
+                
+                <div class="row mt-5">
+                    <div class="col-md-6">
+                        <div class="card mb-4 h-100">
+                            <div class="card-header">
+                                <h5><i class="bi bi-lightbulb"></i> Why We Built This</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>
+                                    As former students, we experienced the beginning-of-semester rush to organize multiple course syllabi and track numerous deadlines across different classes. This tool was born from that experience.
+                                </p>
+                                <p>
+                                    Our goal is to help students, professors, and academic professionals save time and stay organized by automating the extraction of deadlines from course documents.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4 h-100">
+                            <div class="card-header">
+                                <h5><i class="bi bi-gear"></i> How It Works</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>
+                                    Our application uses advanced text analysis and pattern recognition to identify assessment deadlines in academic documents. It's specifically designed to extract:
+                                </p>
+                                <ul>
+                                    <li>Assignment due dates</li>
+                                    <li>Quiz and exam schedules</li>
+                                    <li>Project deadlines</li>
+                                    <li>Presentation dates</li>
+                                </ul>
+                                <p>
+                                    Once extracted, these dates can be converted to calendar events for your preferred digital calendar.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5><i class="bi bi-shield-check"></i> Privacy & Security</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            We take your privacy seriously. The documents you upload are processed temporarily and not permanently stored on our servers. Your information is never shared with third parties.
+                        </p>
+                        <p>
+                            When you connect your Google or Microsoft account, we only request the minimum necessary permissions to add events to your calendar, and you can revoke these permissions at any time.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-5">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">Try It Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
