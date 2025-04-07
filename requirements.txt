@@ -1,0 +1,17 @@
+email-validator
+flask
+flask-login
+flask-sqlalchemy
+flask-wtf
+gunicorn
+icalendar
+oauthlib
+openai
+psycopg2-binary
+pypdf2
+python-dateutil
+python-docx
+requests
+sqlalchemy
+trafilatura
+werkzeug
