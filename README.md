@@ -8,7 +8,6 @@ Early Bird is a sophisticated syllabus processing platform that automatically ex
 - **Intelligent Date Extraction**: Identify and extract assessment deadlines from syllabi
 - **Calendar Integration**: Generate ICS files or directly add events to Google/Microsoft calendars
 - **User-friendly Interface**: Modern responsive design with light/dark mode options
-- **Course-specific Extraction**: Specialized extractors for ENTI, OBHR, SGMA, and FNCE courses
 - **Preview & Edit**: Review extracted dates before calendar generation
 
 ## Technologies Used
