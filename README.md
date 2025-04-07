@@ -44,14 +44,11 @@ Early Bird is a sophisticated syllabus processing platform that automatically ex
 
 ### Web Interface
 
-1. Navigate to the application in your web browser
+1. Navigate to the application in your web browser: https://date-extract-calendar-carolineobenner.replit.app/
 2. Upload a syllabus document (PDF, DOCX, or TXT)
 3. Review the extracted assessment deadlines
 4. Generate calendar files or add events directly to your calendar
 
-### Command Line
-
-The application can also be used from the command line:
 ## Team
 
 This project was created by Master of Management students at the Haskayne School of Business, University of Calgary, as a final project for ENTI 674.
