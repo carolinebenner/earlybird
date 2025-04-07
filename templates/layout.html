@@ -157,7 +157,6 @@
             color: var(--bs-primary) !important;
             background-color: rgba(var(--bs-primary-rgb), 0.1);
         }
-        
         .dropdown-menu {
             border-radius: 10px;
             border: var(--card-border);
@@ -165,12 +164,40 @@
             box-shadow: 0 5px 20px var(--shadow-color);
         }
         
+        [data-bs-theme="light"] .dropdown-menu {
+            background-color: #f0f0f0; /* Darker background in light mode */
+            border-color: #e0e0e0;
+        }
+        
         .dropdown-item {
             padding: 0.6rem 1.2rem;
             transition: all 0.2s ease;
         }
         
+        [data-bs-theme="light"] .dropdown-item {
+            color: #333333; /* Darker text in light mode */
+        }
+        
         .dropdown-item:hover {
+            background-color: rgba(var(--bs-primary-rgb), 0.1);
+            color: var(--bs-primary);
+        }
+        
+        [data-bs-theme="light"] .dropdown-item {
+            color: #333333; /* Darker text in light mode */
+        }
+        
+        .dropdown-item:hover {
+        
+        /* Microsoft dropdown item - special styling for Microsoft button in light mode */
+        [data-bs-theme="light"] .ms-dropdown-item {
+            color: #333333;
+        }
+        
+        [data-bs-theme="light"] .ms-dropdown-item:hover {
+            background-color: rgba(0, 120, 215, 0.1);
+            color: #0078d7;
+        }
             background-color: rgba(var(--bs-primary-rgb), 0.1);
             color: var(--bs-primary);
         }
